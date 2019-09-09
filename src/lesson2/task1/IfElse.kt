@@ -112,7 +112,6 @@ fun whichRookThreatens(
     if((kingX==rookX1||kingY==rookY1)&&(kingX==rookX2||kingY==rookY2))
     else if(kingX==rookX1||kingY==rookY1) return 1
     else if(kingX==rookX2||kingY==rookY2) return 2
-    else return 0
     return 0
 }
 /**
@@ -129,8 +128,18 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
-
+): Int //= TODO()
+{
+    for(i in -6..6)
+        if((kingX==bishopX+i&&kingY==bishopY+i)||(kingX==bishopX-i&&kingY==bishopY-i)||(kingX==bishopX+i&&kingY==bishopY-i)||
+            (kingX==bishopX-i&&kingY==bishopY+i))
+            if(kingX==rookX||kingY==rookY) return 3
+    if(kingX==rookX||kingY==rookY) return 1
+    for(i in -6..6)
+        if ((kingX==bishopX+i&&kingY==bishopY+i)||(kingX==bishopX-i&&kingY==bishopY-i)||(kingX==bishopX+i&&kingY==bishopY-i)||
+            (kingX==bishopX-i&&kingY==bishopY+i)) return 2
+    return 0
+}
 /**
  * Простая
  *
