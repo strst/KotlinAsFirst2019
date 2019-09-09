@@ -148,8 +148,8 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int =// TODO()
-//if()
+fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+//if(a>b)
 /**
  * Средняя
  *
