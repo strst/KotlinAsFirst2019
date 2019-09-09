@@ -130,12 +130,12 @@ fun rookOrBishopThreatens(
     bishopX: Int, bishopY: Int
 ): Int //= TODO()
 {
-    for(i in -6..6)
+    for(i in -8..8)
         if((kingX==bishopX+i&&kingY==bishopY+i)||(kingX==bishopX-i&&kingY==bishopY-i)||(kingX==bishopX+i&&kingY==bishopY-i)||
             (kingX==bishopX-i&&kingY==bishopY+i))
             if(kingX==rookX||kingY==rookY) return 3
     if(kingX==rookX||kingY==rookY) return 1
-    for(i in -6..6)
+    for(i in -8..8)
         if ((kingX==bishopX+i&&kingY==bishopY+i)||(kingX==bishopX-i&&kingY==bishopY-i)||(kingX==bishopX+i&&kingY==bishopY-i)||
             (kingX==bishopX-i&&kingY==bishopY+i)) return 2
     return 0
@@ -148,8 +148,8 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
-
+fun triangleKind(a: Double, b: Double, c: Double): Int =// TODO()
+if()
 /**
  * Средняя
  *
