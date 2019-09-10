@@ -148,8 +148,23 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
-//if(a>b)
+fun triangleKind(a: Double, b: Double, c: Double): Int  //TODO()
+{
+    //if(a > b + c||b > a + c||c > a + b) return -1
+    if (a < b + c && a > b - c && a > c - b)
+        if (a < sqrt(b * b + c * c)) return 0
+        else if (a == sqrt(b * b + c * c)) return 1
+        else if (a > sqrt(b * b + c * c)) return 2
+    if (b < a + c && b > a - c && b > c - a)
+        if (b < sqrt(a * a + c * c)) return 0
+        else if (b == sqrt(a * a + c * c)) return 1
+        else if (b > sqrt(a * a + c * c)) return 2
+    if (c < a + b && c > a - b && c > b - a)
+        if (c < sqrt(a * a + b * b)) return 0
+        else if (c == sqrt(a * a + b * b)) return 1
+        else if (c > sqrt(a * a + b * b)) return 2
+    return -1
+}
 /**
  * Средняя
  *
@@ -158,4 +173,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int  //TODO()
+{
+    if (b < d&&b<c||d < a&&d<b) return -1
+    if(a>c&&b<d) return b-a
+    else if(a<c&&b>d) return d-c
+    else if(c>a&&c<b) return b-c
+    else if(a>c&&a<d) return d-a
+    else if(b==c) return 0
+    return 888
+}
