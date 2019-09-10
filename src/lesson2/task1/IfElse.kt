@@ -181,5 +181,5 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int  //TODO()
     else if(c>a&&c<b) return b-c
     else if(a>c&&a<d) return d-a
     else if(b==c) return 0
-    return 888
+    return 8
 }
