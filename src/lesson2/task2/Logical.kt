@@ -47,7 +47,7 @@ fun daysInMonth(month: Int, year: Int): Int //TODO()
 {
 when(month) {
     1,3,5,7,8,10,12 -> return 31
-    2 -> if (year % 4 == 0) return 29 else return 28
+    2 -> if (year % 4 == 0&& year != 1900) return 29 else return 28
     4,6,9,11 -> return 30
 };return 1
 }
