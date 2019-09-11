@@ -77,10 +77,12 @@ sqrt(sqr(x2-x1)+sqr(y2-y1)) <=r2-r1
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean  //TODO()
 {
-    when
-    {
-        b * a <= r * s->if((a<=r&&b<=s)||(b<=r&&a<=s)) return true
-        b * c <= r * s->if((c<=r&&b<=s)||(b<=r&&c<=s)) return true
-        a * c <= r * s->if((a<=r&&c<=s)||(c<=r&&a<=s)) return true
-    };return false
+
+    if(b * a <= r * s)
+        if((a<=r&&b<=s)||(b<=r&&a<=s)) return true
+    if(b * c <= r * s)
+        if((c<=r&&b<=s)||(b<=r&&c<=s)) return true
+    if(a * c <= r * s)
+        if((a<=r&&c<=s)||(c<=r&&a<=s)) return true
+    return false
 }
