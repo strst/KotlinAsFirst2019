@@ -153,6 +153,7 @@ fun maxDivisor(n: Int): Int //= TODO()
  */
 fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
 {
+    if(m==1||n==1) return false
     var x=m
     var y=n
     var z=0
@@ -174,6 +175,7 @@ fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean //= TODO()
 {
+    if(m==0&&n==0) return false
     for(i in 1..n)
         if(i*i in m..n&&n!=Int.MAX_VALUE) return true
     return false
@@ -258,7 +260,7 @@ fun cos(x: Double, eps: Double): Double
         n *= -1.0 * z * z / ((2 * i - 1) * (2 * i));
         i++;
     }
-    while (abs(n) > 0.000000001);
+    while (abs(n) > eps);
     return sum;
 }
 /**
@@ -381,4 +383,47 @@ fun squareSequenceDigit(n: Int): Int //= TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int //= TODO()
+{
+    var x=1
+    var z=0
+    var c=x
+    var g =1
+    for(i in 1..n-1)
+    {
+        c=x
+        x+=z
+        z=c
+        if(z==0)z++
+        if(x/100!=0)g=g+3
+        else if(x/10!=0&&(x/100)==0)g=g+2
+        else g++
+        //if(g==n) break
+        if(g==n&&x/100==0)
+        {
+            x%=10
+            break
+        }
+        if(g==n+1&&x/100==0)
+        {
+            x/=10
+            break
+        }
+        if(g==n+2&&x/100!=0)
+        {
+            x=(x/100)%10
+            break
+        }
+        if(g==n+1&&x/100!=0)
+        {
+            x=(x/10)%10
+            break
+        }
+        if(g==n&&x/100!=0)
+        {
+            x=x%10
+            break
+        }
+    }
+    return x
+}
