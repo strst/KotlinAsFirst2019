@@ -175,7 +175,7 @@ fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean //= TODO()
 {
-    if(m==0&&n==0) return false
+    if(m==0&&n==0) return true
     for(i in 1..n)
         if(i*i in m..n&&n!=Int.MAX_VALUE) return true
     return false
@@ -387,43 +387,17 @@ fun fibSequenceDigit(n: Int): Int //= TODO()
 {
     var x=1
     var z=0
-    var c=x
+    var c=0
     var g =1
     for(i in 1..n-1)
     {
         c=x
         x+=z
         z=c
-        if(z==0)z++
-        if(x/100!=0)g=g+3
-        else if(x/10!=0&&(x/100)==0)g=g+2
-        else g++
-        //if(g==n) break
-        if(g==n&&x/100==0)
-        {
-            x%=10
-            break
-        }
-        if(g==n+1&&x/100==0)
-        {
-            x/=10
-            break
-        }
-        if(g==n+2&&x/100!=0)
-        {
-            x=(x/100)%10
-            break
-        }
-        if(g==n+1&&x/100!=0)
-        {
-            x=(x/10)%10
-            break
-        }
-        if(g==n&&x/100!=0)
-        {
-            x=x%10
-            break
-        }
+        g++
+        for(i in 1..10)
+            if((x/10.0.pow(i).toInt())!=0) g++
+        if(g>=n)  return (x/10.0.pow(g-n).toInt())%10
     }
-    return x
+    return 1
 }
