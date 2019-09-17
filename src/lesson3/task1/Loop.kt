@@ -326,16 +326,10 @@ fun hasDifferentDigits(n: Int): Boolean //= TODO()
 {
     if(n==0) return false
     var x=n%10
-    var c=0
-    for(i in 1..10)
-    {
-        if((n/(10.0.pow(i).toInt()))==0)
-        {
-            c=i-1
-            break
-        }
-    }
-    for(i in 1..c)
+    var c=1
+    for(i in 1..9)
+        if((n/(10.0.pow(i).toInt())%10)!=0) c++
+    for(i in 1..c-1)
     {
         if((n/(10.0.pow(i).toInt())%10)!=x) return true
     }
