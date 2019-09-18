@@ -153,18 +153,11 @@ fun maxDivisor(n: Int): Int //= TODO()
  */
 fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
 {
-    if(m==1||n==1) return false
-    var x=m
-    var y=n
-    var z=0
-    for(i in 1..15)
-    {
-        if(y==0) if((m*n/x)==1) return true
-        z=x%y
-        x=y
-        y=z
-    }
-    return false
+    if(m==1)
+        return true
+    if(n==0&&m!=1)
+        return false
+    return isCoPrime(n, m%n)
 }
 /**
  * Простая
