@@ -175,9 +175,8 @@ fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean //= TODO()
 {
-    if(m==0&&n==0) return true
-    for(i in 1..n)
-        if(i*i in m..n&&n!=Int.MAX_VALUE) return true
+    for(i in 0..n)
+        if(i<46341&&i*i in m..n&&i*i<=n) return true
     return false
 }
 /**
