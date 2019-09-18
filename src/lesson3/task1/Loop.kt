@@ -73,16 +73,16 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 
 fun digitNumber(n: Int): Int  //TODO()
 {
-    var x=n
-    var z=0
-    for(i in 1..50)
-    {
+    var x = n
+    var z = 0
+    for (i in 1..50) {
         x = x / 10
         z++
-        if(x==0)break
+        if (x == 0) break
     }
     return z
 }
+
 /**
  * Простая
  *
@@ -91,12 +91,12 @@ fun digitNumber(n: Int): Int  //TODO()
  */
 fun fib(n: Int): Int  //TODO()
 {
-    var x=emptyArray<Int>()
-    for(i in 0..n)
+    var x = emptyArray<Int>()
+    for (i in 0..n)
         x += 1
-    for(i in 0..n-2)
-        x[i+2]=x[i]+x[i+1]
-    return x[n-1]
+    for (i in 0..n - 2)
+        x[i + 2] = x[i] + x[i + 1]
+    return x[n - 1]
 }
 
 /**
@@ -107,15 +107,14 @@ fun fib(n: Int): Int  //TODO()
  */
 fun lcm(m: Int, n: Int): Int // TODO()
 {
-    var x=m
-    var y=n
-    var z=0
-    for(i in 1..15)
-    {
-        if(y==0) return m*n/x
-        z=x%y
-        x=y
-        y=z
+    var x = m
+    var y = n
+    var z = 0
+    for (i in 1..15) {
+        if (y == 0) return m * n / x
+        z = x % y
+        x = y
+        y = z
     }
     return 1
 }
@@ -139,11 +138,12 @@ fun minDivisor(n: Int): Int //= TODO()
  */
 fun maxDivisor(n: Int): Int //= TODO()
 {
-    var x=0
-    for(i in 1..n)
-        if(n%i==0&&i!=n) x= i
+    var x = 0
+    for (i in 1..n)
+        if (n % i == 0 && i != n) x = i
     return x
 }
+
 /**
  * Простая
  *
@@ -153,12 +153,13 @@ fun maxDivisor(n: Int): Int //= TODO()
  */
 fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
 {
-    if(m==1)
+    if (m == 1)
         return true
-    if(n==0&&m!=1)
+    if (n == 0 && m != 1)
         return false
-    return isCoPrime(n, m%n)
+    return isCoPrime(n, m % n)
 }
+
 /**
  * Простая
  *
@@ -168,10 +169,11 @@ fun isCoPrime(m: Int, n: Int): Boolean //= TODO()
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean //= TODO()
 {
-    for(i in 0..n)
-        if(i<46341&&i*i in m..n&&i*i<=n) return true
+    for (i in 0..n)
+        if (i < 46341 && i * i in m..n && i * i <= n) return true
     return false
 }
+
 /**
  * Средняя
  *
@@ -191,16 +193,13 @@ fun squareBetweenExists(m: Int, n: Int): Boolean //= TODO()
 fun collatzSteps(x: Int): Int //= TODO()
 {
     var z = 0
-    var c=x
+    var c = x
     for (i in 1..150)
         if (c == 1) return z
-        else if (c % 2 == 0)
-        {
-            c= c / 2
+        else if (c % 2 == 0) {
+            c = c / 2
             z++
-        }
-        else
-        {
+        } else {
             c = 3 * c + 1
             z++
         }
@@ -218,19 +217,18 @@ fun collatzSteps(x: Int): Int //= TODO()
  */
 fun sin(x: Double, eps: Double): Double //= TODO()
 {
-    var z=x%(2* PI)
+    var z = x % (2 * PI)
     var n = z;
     var sum = 0.0;
     var i = 1;
-    do
-    {
+    do {
         sum += n;
         n *= -1.0 * z * z / ((2 * i) * (2 * i + 1));
         i++;
-    }
-    while (abs(n) > eps);
+    } while (abs(n) > eps);
     return sum;
 }
+
 /**
  * Средняя
  *
@@ -240,21 +238,19 @@ fun sin(x: Double, eps: Double): Double //= TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double
-{
-    var z=x%(2* PI)
+fun cos(x: Double, eps: Double): Double {
+    var z = x % (2 * PI)
     var n = 1.0;
     var sum = 0.0;
     var i = 1;
-    do
-    {
+    do {
         sum += n;
         n *= -1.0 * z * z / ((2 * i - 1) * (2 * i));
         i++;
-    }
-    while (abs(n) > eps);
+    } while (abs(n) > eps);
     return sum;
 }
+
 /**
  * Средняя
  *
@@ -264,21 +260,20 @@ fun cos(x: Double, eps: Double): Double
  */
 fun revert(n: Int): Int //= TODO()
 {
-    var x=n
-    var c=0
-    var z=0
-    for(i in 10 downTo 0)
-    {
-        if((n/(10.0.pow(i).toInt()))!=0)
-        {
-            x=(n/(10.0.pow(i).toInt()))%10
+    var x = n
+    var c = 0
+    var z = 0
+    for (i in 10 downTo 0) {
+        if ((n / (10.0.pow(i).toInt())) != 0) {
+            x = (n / (10.0.pow(i).toInt())) % 10
 
-            z+=(x*(10.0.pow(c).toInt()))
+            z += (x * (10.0.pow(c).toInt()))
             c++
         }
     }
     return z
 }
+
 /**
  * Средняя
  *
@@ -290,22 +285,21 @@ fun revert(n: Int): Int //= TODO()
  */
 fun isPalindrome(n: Int): Boolean //= TODO()
 {
-    var x=n
-    var c=0
-    var z=0
-    for(i in 10 downTo 0)
-    {
-        if((n/(10.0.pow(i).toInt()))!=0)
-        {
-            x=(n/(10.0.pow(i).toInt()))%10
+    var x = n
+    var c = 0
+    var z = 0
+    for (i in 10 downTo 0) {
+        if ((n / (10.0.pow(i).toInt())) != 0) {
+            x = (n / (10.0.pow(i).toInt())) % 10
 
-            z+=(x*(10.0.pow(c).toInt()))
+            z += (x * (10.0.pow(c).toInt()))
             c++
         }
     }
-    if(z==n) return true
+    if (z == n) return true
     return false
 }
+
 /**
  * Средняя
  *
@@ -316,17 +310,17 @@ fun isPalindrome(n: Int): Boolean //= TODO()
  */
 fun hasDifferentDigits(n: Int): Boolean //= TODO()
 {
-    if(n==0) return false
-    var x=n%10
-    var c=1
-    for(i in 1..9)
-        if((n/(10.0.pow(i).toInt())%10)!=0) c++
-    for(i in 1..c-1)
-    {
-        if((n/(10.0.pow(i).toInt())%10)!=x) return true
+    if (n == 0) return false
+    var x = n % 10
+    var c = 1
+    for (i in 1..9)
+        if ((n / (10.0.pow(i).toInt()) % 10) != 0) c++
+    for (i in 1..c - 1) {
+        if ((n / (10.0.pow(i).toInt()) % 10) != x) return true
     }
     return false
 }
+
 /**
  * Сложная
  *
@@ -338,20 +332,16 @@ fun hasDifferentDigits(n: Int): Boolean //= TODO()
  */
 fun squareSequenceDigit(n: Int): Int //= TODO()
 {
-    var c=0
-    var g=0
-    for(i in 1..n)
-    {
-        c=i*i
-        for(i in 1..100)
-        {
-            if((c/(10.0.pow(i).toInt()))==0)
-            {
-                g+=i
-                if(g>=n)
-                {
-                    g-=n
-                    return ((c/(10.0.pow(g).toInt()))%10)
+    var c = 0
+    var g = 0
+    for (i in 1..n) {
+        c = i * i
+        for (i in 1..100) {
+            if ((c / (10.0.pow(i).toInt())) == 0) {
+                g += i
+                if (g >= n) {
+                    g -= n
+                    return ((c / (10.0.pow(g).toInt())) % 10)
                 }
                 break
             }
@@ -360,6 +350,7 @@ fun squareSequenceDigit(n: Int): Int //= TODO()
     }
     return 888
 }
+
 /**
  * Сложная
  *
@@ -371,19 +362,18 @@ fun squareSequenceDigit(n: Int): Int //= TODO()
  */
 fun fibSequenceDigit(n: Int): Int //= TODO()
 {
-    var x=1
-    var z=0
-    var c=0
-    var g =1
-    for(i in 1..n-1)
-    {
-        c=x
-        x+=z
-        z=c
+    var x = 1
+    var z = 0
+    var c = 0
+    var g = 1
+    for (i in 1..n - 1) {
+        c = x
+        x += z
+        z = c
         g++
-        for(i in 1..10)
-            if((x/10.0.pow(i).toInt())!=0) g++
-        if(g>=n)  return (x/10.0.pow(g-n).toInt())%10
+        for (i in 1..10)
+            if ((x / 10.0.pow(i).toInt()) != 0) g++
+        if (g >= n) return (x / 10.0.pow(g - n).toInt()) % 10
     }
     return 1
 }
