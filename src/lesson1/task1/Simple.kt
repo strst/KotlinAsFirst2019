@@ -56,6 +56,7 @@ fun main() {
 /**
  * Тривиальная
  *
+ *
  * Пользователь задает время в часах, минутах и секундах, например, 8:20:35.
  * Рассчитать время в секундах, прошедшее с начала суток (30035 в данном случае).
  */
@@ -116,13 +117,8 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
-fun accountInThreeYears(initial: Int, percent: Int): Double {
-    var x = initial * 1.0
-    for (i in 1..3) {
-        x = x * percent / 100.0 + x
-    }
-    return x
-}
+fun accountInThreeYears(initial: Int, percent: Int): Double =
+    initial * (1.0 + percent / 100.0).pow(3)
 
 /**
  * Простая

@@ -66,9 +66,8 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 fun ageDescription(age: Int): String =
-    if ((age in 11..14) || (age in 111..114)) "$age лет"
-    else if (age % 10 == 1) "$age год"
-    else if (age % 10 in 2..4) "$age года"
+    if (age % 10 == 1 && age != 11 && age != 111) "$age год"
+    else if (age % 10 in 2..4 && age !in 12..14 && age !in 112..114) "$age года"
     else "$age лет"
 
 /**
@@ -83,9 +82,9 @@ fun timeForHalfWay(
     t2: Double, v2: Double,
     t3: Double, v3: Double
 ): Double {
-    var tv1 = t1 * v1
-    var tv2 = t2 * v2
-    var tsum = tv1 + tv2 + t3 * v3
+    val tv1 = t1 * v1
+    val tv2 = t2 * v2
+    val tsum = tv1 + tv2 + t3 * v3
     return if ((tsum) / 2 <= tv1)
         (tsum) / 2 / v1
     else if ((tsum) / 2 <= tv2 + tv1)
@@ -141,22 +140,21 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int {
-    if (a > b + c || b > a + c || c > a + b) return -1
-    if (a >= b && a >= c)
-        if (a < sqrt(b * b + c * c)) return 0
-        else if (a == sqrt(b * b + c * c)) return 1
-        else if (a > sqrt(b * b + c * c)) return 2
-    if (b >= a && b >= c)
-        if (b < sqrt(a * a + c * c)) return 0
-        else if (b == sqrt(a * a + c * c)) return 1
-        else if (b > sqrt(a * a + c * c)) return 2
-    if (c >= b && c >= a)
-        if (c < sqrt(a * a + b * b)) return 0
-        else if (c == sqrt(a * a + b * b)) return 1
-        else if (c > sqrt(a * a + b * b)) return 2
-    return -1
-}
+fun triangleKind(a: Double, b: Double, c: Double): Int =
+    if (a > b + c || b > a + c || c > a + b) -1
+    else if (a >= b && a >= c)
+        if (a < sqrt(b * b + c * c)) 0
+        else if (a == sqrt(b * b + c * c)) 1
+        else 2
+    else if (b >= a && b >= c)
+        if (b < sqrt(a * a + c * c)) 0
+        else if (b == sqrt(a * a + c * c)) 1
+        else 2
+    else if (c >= b && c >= a)
+        if (c < sqrt(a * a + b * b)) 0
+        else if (c == sqrt(a * a + b * b)) 1
+        else 2
+    else -1
 
 /**
  * Средняя

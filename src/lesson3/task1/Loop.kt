@@ -74,10 +74,10 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var x = n
     var z = 0
-    for (i in 1..10) {
-        x = x / 10
+    if (n == 0) z++
+    while (x != 0) {
+        x /= 10
         z++
-        if (x == 0) break
     }
     return z
 }
@@ -92,7 +92,7 @@ fun fib(n: Int): Int {
     var x = 1
     var z = 0
     var c = 0
-    for (i in 1..n - 1) {
+    for (i in 1 until n) {
         c = x
         x += z
         z = c
@@ -110,13 +110,12 @@ fun lcm(m: Int, n: Int): Int {
     var x = m
     var y = n
     var z = 0
-    for (i in 1..15) {
-        if (y == 0) return m * n / x
+    while (y != 0) {
         z = x % y
         x = y
         y = z
     }
-    return 1
+    return m * n / x
 }
 
 /**
@@ -162,8 +161,8 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    for (i in 0..sqrt(n.toDouble()).toInt())
-        if (i < Int.MAX_VALUE && i * i in m..n && i * i <= n) return true
+    for (i in sqrt(m.toDouble()).toInt()..sqrt(n.toDouble()).toInt())
+        if (i * i in m..n && i * i <= n) return true
     return false
 }
 
@@ -186,16 +185,15 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
 fun collatzSteps(x: Int): Int {
     var z = 0
     var c = x
-    for (i in 1..150)
-        if (c == 1) return z
-        else if (c % 2 == 0) {
+    while (c != 1)
+        if (c % 2 == 0) {
             c = c / 2
             z++
         } else {
             c = 3 * c + 1
             z++
         }
-    return 1
+    return z
 }
 
 /**
@@ -208,7 +206,7 @@ fun collatzSteps(x: Int): Int {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var z = x % (2 * PI)
+    val z = x % (2 * PI)
     var n = z
     var sum = 0.0
     var i = 1
@@ -230,7 +228,7 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var z = x % (2 * PI)
+    val z = x % (2 * PI)
     var n = 1.0
     var sum = 0.0
     var i = 1
@@ -254,7 +252,7 @@ fun revert(n: Int): Int {
     var c = 0
     var z = 0
     for (i in 10 downTo 0) {
-        var g = n / (10.0.pow(i).toInt())
+        val g = n / (10.0.pow(i).toInt())
         if (g != 0) {
             x = g % 10
 
@@ -275,8 +273,7 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean =
-    if (revert(n) == n) true
-    else false
+    revert(n) == n
 
 /**
  * Средняя
@@ -288,7 +285,7 @@ fun isPalindrome(n: Int): Boolean =
  */
 fun hasDifferentDigits(n: Int): Boolean {
     if (n == 0) return false
-    for (i in 1..digitNumber(n) - 1) {
+    for (i in 1 until digitNumber(n)) {
         if ((n / (10.0.pow(i).toInt()) % 10) != n % 10) return true
     }
     return false
