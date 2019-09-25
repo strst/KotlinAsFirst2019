@@ -283,7 +283,7 @@ fun convertToString(n: Int, base: Int): String {
         "v", "w", "x", "y", "z"
     )
     for (i in 0 until v.size)
-        if (v[i] in 9..35) x += list[v[i] - 10]
+        if (v[i] in 10..35) x += list[v[i] - 10]
         else x += v[i]
     /*if (v[i] > 9)
             x += (v[i] + 87).toChar()
@@ -469,8 +469,8 @@ fun russian(n: Int): String {
         "четырнадцать",
         "пятнадцать",
         "шестнадцать",
-        "семьнадцать",
-        "восемьнадцать",
+        "семнадцать",
+        "восемнадцать",
         "девятнадцать"
     )
     val tisa = listOf("одна", "две", "а", "и")
