@@ -298,7 +298,7 @@ fun squareSequenceDigit(n: Int): Int {
         if (g >= n)
             break
     }
-    return (c / (10.0.pow(g - n).toInt())) % 10
+    return c / (10.0.pow(g - n).toInt()) % 10
 }
 
 /**
