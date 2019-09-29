@@ -477,13 +477,12 @@ fun russian(n: Int): String {
     val tis = "тысяч"
     val prob = " "
     var l = ""
-    var x = n
     var i = 1
     var c = digitNumber(n)
     var k = 0
     var g = 0
     while (c != 0) {
-        x = n / (10.0.pow(digitNumber(n) - i).toInt()) % 10
+        val x = n / (10.0.pow(digitNumber(n) - i).toInt()) % 10
         when (c) {
             6 -> {
                 l += sot[x - 1];g++

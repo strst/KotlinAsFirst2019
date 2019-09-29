@@ -3,7 +3,6 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
-import lesson1.task1.sqr
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
@@ -84,13 +83,12 @@ fun timeForHalfWay(
 ): Double {
     val tv1 = t1 * v1
     val tv2 = t2 * v2
-    val tsum = tv1 + tv2 + t3 * v3
-    return if ((tsum) / 2 <= tv1)
-        (tsum) / 2 / v1
-    else if ((tsum) / 2 <= tv2 + tv1)
-        ((tsum) / 2 - tv1) / v2 + t1
-    else
-        ((tsum) / 2 - tv1 - tv2) / v3 + t1 + t2
+    val ts = tv1 + tv2 + t3 * v3
+    return when {
+        (ts) / 2 <= tv1 -> (ts) / 2 / v1
+        (ts) / 2 <= tv2 + tv1 -> ((ts) / 2 - tv1) / v2 + t1
+        else -> ((ts) / 2 - tv1 - tv2) / v3 + t1 + t2
+    }
 }
 
 /**
@@ -143,17 +141,23 @@ fun rookOrBishopThreatens(
 fun triangleKind(a: Double, b: Double, c: Double): Int =
     if (a > b + c || b > a + c || c > a + b) -1
     else if (a >= b && a >= c)
-        if (a < sqrt(b * b + c * c)) 0
-        else if (a == sqrt(b * b + c * c)) 1
-        else 2
+        when {
+            a < sqrt(b * b + c * c) -> 0
+            a == sqrt(b * b + c * c) -> 1
+            else -> 2
+        }
     else if (b >= a && b >= c)
-        if (b < sqrt(a * a + c * c)) 0
-        else if (b == sqrt(a * a + c * c)) 1
-        else 2
+        when {
+            b < sqrt(a * a + c * c) -> 0
+            b == sqrt(a * a + c * c) -> 1
+            else -> 2
+        }
     else if (c >= b && c >= a)
-        if (c < sqrt(a * a + b * b)) 0
-        else if (c == sqrt(a * a + b * b)) 1
-        else 2
+        when {
+            c < sqrt(a * a + b * b) -> 0
+            c == sqrt(a * a + b * b) -> 1
+            else -> 2
+        }
     else -1
 
 /**
@@ -167,7 +171,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int =
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
     if (b < c || d < a) -1
     else if (b == c || d == a || b - a == 0 || c - d == 0) 0
-    else if (a < c && b > c && b < d) b - c
-    else if (c < a && d > a && d < b) d - a
+    else if (c in (a + 1)..(b - 1) && b < d) b - c
+    else if (a in (c + 1)..(d - 1) && d < b) d - a
     else if (a <= c && b >= d) d - c
     else b - a
