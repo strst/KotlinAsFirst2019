@@ -5,6 +5,7 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import lesson3.task1.digitNumber
+import lesson3.task1.minDivisor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -120,8 +121,8 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var x = 0.0
-    for (i in 0 until v.size)
-        x += sqr(v[i])
+    for (i in v)
+        x += sqr(i)
     return sqrt(x)
 }
 
@@ -132,8 +133,8 @@ fun abs(v: List<Double>): Double {
  */
 fun mean(list: List<Double>): Double {
     var x = 0.0
-    for (i in 0 until list.size) {
-        x += list[i]
+    for (i in list) {
+        x += i
     }
     return if (list.isEmpty()) 0.0
     else x / list.size
@@ -148,13 +149,12 @@ fun mean(list: List<Double>): Double {
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> =
-    if (list.size != 0) {
-        val x = mean(list)
-        for (i in 0 until list.size)
-            list[i] -= x
-        list
-    } else list
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val x = mean(list)
+    for (i in 0 until list.size)
+        list[i] -= x
+    return list
+}
 
 /**
  * Средняя
@@ -180,8 +180,11 @@ fun times(a: List<Int>, b: List<Int>): Int {
  */
 fun polynom(p: List<Int>, x: Int): Int {
     var z = 0
+    val c = mutableListOf(1, x)
+    for (i in 2 until p.size)
+        c.add(x.toDouble().pow(i).toInt())
     for (i in 0 until p.size)
-        z += p[i] * (x.toDouble().pow(i).toInt())
+        z += p[i] * c[i]
     return z
 }
 
@@ -211,14 +214,11 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
 fun factorize(n: Int): List<Int> {
     val v = mutableListOf<Int>()
     var x = n
-    for (i in 2..n) {
-        if (x == 1) break
-        while (x % i == 0) {
-            v.add(i)
-            x /= i
-        }
+    while (x != 1) {
+        val c = minDivisor(x)
+        v.add(c)
+        x /= c
     }
-    if (v.size == 0) v.add(n)
     return v
 }
 
@@ -232,11 +232,11 @@ fun factorize(n: Int): List<Int> {
 fun factorizeToString(n: Int): String {
     val x = factorize(n)
     var l = ""
-    for (i in 0 until x.size) {
-        l += x[i]
-        l += "*"
+    for (i in 0..x.size - 2) {
+        l += "${x[i]}*"
     }
-    return l.substring(0, l.length - 1)
+    l += x[x.size - 1]
+    return l
 }
 
 /**
@@ -276,18 +276,10 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     val v = convert(n, base).toMutableList()
     var x = ""
-    val list = listOf(
-        "a", "b", "c", "d", "e", "f", "g",
-        "h", "i", "j", "k", "l", "m", "n",
-        "o", "p", "q", "r", "s", "t", "u",
-        "v", "w", "x", "y", "z"
-    )
     for (i in 0 until v.size)
-        if (v[i] in 10..35) x += list[v[i] - 10]
-        else x += v[i]
-    /*if (v[i] > 9)
+        if (v[i] > 9)
             x += (v[i] + 87).toChar()
-        else x += v[i]*/
+        else x += v[i]
     return x
 }
 
@@ -301,8 +293,11 @@ fun convertToString(n: Int, base: Int): String {
 
 fun decimal(digits: List<Int>, base: Int): Int {
     var x = 0
+    val c = mutableListOf<Int>()
+    for (i in digits.size - 1 downTo 0)
+        c.add(base.toDouble().pow(i).toInt())
     for (i in 0 until digits.size)
-        x += digits[i] * base.toDouble().pow(digits.size - 1 - i).toInt()
+        x += digits[i] * c[i]
     return x
 }
 
@@ -319,51 +314,15 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun perevod(v: Char): Int =
-    when (v) {
-        '0' -> 0
-        '1' -> 1
-        '2' -> 2
-        '3' -> 3
-        '4' -> 4
-        '5' -> 5
-        '6' -> 6
-        '7' -> 7
-        '8' -> 8
-        '9' -> 9
-        'a' -> 10
-        'b' -> 11
-        'c' -> 12
-        'd' -> 13
-        'e' -> 14
-        'f' -> 15
-        'g' -> 16
-        'h' -> 17
-        'i' -> 18
-        'j' -> 19
-        'k' -> 20
-        'l' -> 21
-        'm' -> 22
-        'n' -> 23
-        'o' -> 24
-        'p' -> 25
-        'q' -> 26
-        'r' -> 27
-        's' -> 28
-        't' -> 29
-        'u' -> 30
-        'v' -> 31
-        'w' -> 32
-        'x' -> 33
-        'y' -> 34
-        'z' -> 35
-        else -> 0
-    }
 
 fun decimalFromString(str: String, base: Int): Int {
     var x = 0
-    for (i in 0 until str.length)
-        x += perevod(str[str.length - 1 - i]) * base.toDouble().pow(i).toInt()
+    for (i in 0 until str.length) {
+        val z = str[str.length - 1 - i].toInt()
+        val c = base.toDouble().pow(i).toInt()
+        x += if (z in 48..57) (z - 48) * c
+        else (z - 87) * c
+    }
     return x
 }
 
@@ -378,48 +337,22 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var x = ""
     var z = n
+    var i = 0
+    val number = listOf(
+        1000, 900, 500, 400,
+        100, 90, 50, 40,
+        10, 9, 5, 4, 1
+    )
+    val word = listOf(
+        "M", "CM", "D", "CD",
+        "C", "XC", "L", "XL",
+        "X", "IX", "V", "IV", "I"
+    )
     while (z > 0)
-        when {
-            z >= 1000 -> {
-                x += "M"; z -= 1000
-            }
-            z >= 900 -> {
-                x += "CM"; z -= 900
-            }
-            z >= 500 -> {
-                x += "D"; z -= 500
-            }
-            z >= 400 -> {
-                x += "CD"; z -= 400
-            }
-            z >= 100 -> {
-                x += "C"; z -= 100
-            }
-            z >= 90 -> {
-                x += "XC"; z -= 90
-            }
-            z >= 50 -> {
-                x += "L"; z -= 50
-            }
-            z >= 40 -> {
-                x += "XL"; z -= 40
-            }
-            z >= 10 -> {
-                x += "X"; z -= 10
-            }
-            z >= 9 -> {
-                x += "IX"; z -= 9
-            }
-            z >= 5 -> {
-                x += "V"; z -= 5
-            }
-            z >= 4 -> {
-                x += "IV"; z -= 4
-            }
-            z >= 1 -> {
-                x += "I"; z -= 1
-            }
-        }
+        if (z >= number[i]) {
+            z -= number[i]
+            x += word[i]
+        } else i++
     return x
 }
 
@@ -431,7 +364,7 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    val sot = listOf(
+    val hundred = listOf(
         "сто",
         "двести",
         "триста",
@@ -442,7 +375,7 @@ fun russian(n: Int): String {
         "восемьсот",
         "девятьсот"
     )
-    val dec = listOf(
+    val ten = listOf(
         "двадцать",
         "тридцать",
         "сорок",
@@ -452,7 +385,7 @@ fun russian(n: Int): String {
         "восемьдесят",
         "девяносто"
     )
-    val edn = listOf(
+    val one = listOf(
         "один",
         "два",
         "три",
@@ -473,44 +406,41 @@ fun russian(n: Int): String {
         "восемнадцать",
         "девятнадцать"
     )
-    val tisa = listOf("одна", "две", "а", "и")
-    val tis = "тысяч"
-    val prob = " "
+    val thousand = listOf("одна", "две", "а", "и")
+    val thous = "тысяч"
+    val space = " "
     var l = ""
+    var g = ""
     var i = 1
     var c = digitNumber(n)
     var k = 0
-    var g = 0
     while (c != 0) {
         val x = n / (10.0.pow(digitNumber(n) - i).toInt()) % 10
         when (c) {
-            6 -> {
-                l += sot[x - 1];g++
+            6 -> g = hundred[x - 1]
+            5 -> if (x !in 0..1)
+                g = ten[x - 2]
+            else if (x == 1) k++
+            4 -> when {
+                k == 1 -> {
+                    g = one[x + 9] + space + thous
+                    k--
+                }
+                x in 1..2 -> g = thousand[x - 1] + space + thous + thousand[x + 1]
+                x in 3..4 -> g = one[x - 1] + space + thous + thousand[3]
+                x != 0 -> g = one[x - 1] + space + thous
+                else -> g = thous
             }
-            5 -> if (x !in 0..1) {
-                l += dec[x - 2];g++
-            } else if (x == 1) k++
-            4 -> if (k == 1) {
-                l += edn[x + 9] + prob + tis;k--;g++
-            } else if (x in 1..2 && x != 0) {
-                l += tisa[x - 1] + prob + tis + tisa[x + 1];g++
-            } else if (x in 3..4) {
-                l += edn[x - 1] + prob + tis + tisa[3];g++
-            } else if (x != 0) {
-                l += edn[x - 1] + prob + tis;g++
-            } else {
-                l += tis;g++
-            }
-            3 -> if (x != 0) {
-                l += sot[x - 1];g++
-            }
-            2 -> if (x !in 0..1) {
-                l += dec[x - 2];g++
-            } else if (x == 1) k++
-            1 -> if (k == 1) l += edn[x + 9] else if (x != 0) l += edn[x - 1]
+            3 -> if (x != 0)
+                g = hundred[x - 1]
+            2 -> if (x !in 0..1)
+                g = ten[x - 2]
+            else if (x == 1) k++
+            1 -> if (k == 1) g = one[x + 9] else if (x != 0) g = one[x - 1]
         }
-        if (g == 1) {
-            l += prob;g--
+        if (g != "") {
+            l += g + space
+            g = ""
         }
         i++
         c--

@@ -91,7 +91,38 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): MutableMap<Int, List<String>> {
+    if (grades == mapOf<String, Int>()) return mutableMapOf()
+    val v = mutableMapOf<Int, List<String>>()
+    var x1 = mutableListOf<Int>()
+    var x2 = mutableListOf<MutableList<String>>()
+    for ((j, k) in grades) {
+        x1.add(k)
+        x2.add(mutableListOf(j))
+    }
+    x1 = x1.reversed().toMutableList()
+    x2 = x2.reversed().toMutableList()
+    var i = 0
+    var k = 0
+    while (i != -1) {
+        while (k != -1) {
+            k++
+            if (k == x1.size) break
+            if (x1[i] == x1[k]) {
+                x1.removeAt(k)
+                x2[i].plusAssign(x2[k])
+                x2.removeAt(k)
+                k--
+            }
+        }
+        i++
+        if (i == x1.size) break
+        k = i
+    }
+    for (z in 0 until x1.size)
+        v[x1[z]] = x2[z]
+    return v
+}
 
 /**
  * Простая
@@ -103,7 +134,12 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    for (k in a)
+        for (j in b)
+            if (k == j) return true
+    return false
+}
 
 /**
  * Простая
@@ -119,7 +155,16 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TODO()
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMap<String, String> {
+    val x = mutableListOf<String>()
+    for (k in b)
+        for (j in a)
+            if (k == j)
+                x += k.key
+    for (i in x)
+        a.remove(i)
+    return a
+}
 
 /**
  * Простая
@@ -128,7 +173,13 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TO
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    val set = mutableSetOf<String>()
+    for (k in a)
+        for (j in b)
+            if (k == j) set.add(k)
+    return set.toList()
+}
 
 /**
  * Средняя

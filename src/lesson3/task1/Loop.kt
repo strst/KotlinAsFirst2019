@@ -124,6 +124,7 @@ fun lcm(m: Int, n: Int): Int {
 fun minDivisor(n: Int): Int {
     var i = 3
     if (n % 2 == 0) return 2
+    if (isPrime(n)) return n
     while (n % i != 0) {
         i += 2
     }
@@ -146,13 +147,12 @@ fun maxDivisor(n: Int): Int =
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
+fun isCoPrime(m: Int, n: Int): Boolean =
     if (m == 1)
-        return true
-    if (n == 0 && m != 1)
-        return false
-    return isCoPrime(n, m % n)
-}
+        true
+    else if (n == 0 && m != 1)
+        false
+    else isCoPrime(n, m % n)
 
 /**
  * Простая
@@ -246,10 +246,13 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-    var z = 0
-    for (i in digitNumber(n) downTo 0)
-        z += n / (10.0.pow(i).toInt()) % 10 * (10.0.pow(digitNumber(n) - i - 1).toInt())
-    return z
+    var y = 0
+    var x = n
+    while (x != 0) {
+        y = y * 10 + x % 10
+        x /= 10
+    }
+    return y
 }
 
 /**
