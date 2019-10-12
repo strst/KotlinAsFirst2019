@@ -216,7 +216,7 @@ fun factorize(n: Int): List<Int> {
     var x = n
     while (x != 1) {
         val c = minDivisor(x)
-        v.add(c)
+        v += c
         x /= c
     }
     return v

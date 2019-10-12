@@ -198,7 +198,16 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val c = mutableMapOf<String, String>()
+    c += mapA
+    c += mapB
+    for ((key, value) in mapA)
+        for ((key1, value1) in mapB)
+            if (key1 == key && value != value1)
+                c[key1] = "$value, $value1"
+    return c
+}
 
 /**
  * Средняя
@@ -210,7 +219,15 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): MutableMap<String, Double> {
+    val v = mutableMapOf<String, Double>()
+    v += stockPrices
+    for ((key, value) in v)
+        for ((first, second) in stockPrices)
+            if (first == key && second != value)
+                v[key] = (second + value) / 2
+    return v
+}
 
 /**
  * Средняя
@@ -227,7 +244,11 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    for ((key, value) in stuff)
+        if (value.first == kind) return key
+    return null
+}
 
 /**
  * Средняя
@@ -238,7 +259,19 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    var c = 0
+    for (a in chars)
+        for (b in word)
+            if (a == b) {
+                c++
+                break
+            }
+    return if (c != 0)
+        c == chars.size
+    else
+        false
+}
 
 /**
  * Средняя
@@ -252,7 +285,23 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val l = mutableMapOf<String, Int>()
+    var g = ""
+    var z = 0
+    for (a in list) {
+        for (b in list)
+            if (a == b) {
+                g = a
+                z++
+            }
+        if (z != 0) break
+    }
+    if (z > 1)
+        l[g] = z
+    return l
+
+}
 
 /**
  * Средняя
@@ -263,7 +312,29 @@ fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun canBuild(chars: String, word: String): Boolean {
+    var c = 0
+    for (a in chars)
+        for (b in word)
+            if (a == b) {
+                c++
+                break
+            }
+    return c == chars.length
+}
+
+fun hasAnagrams(words: List<String>): Boolean {
+    var k = 0
+    for (a in words)
+        for (b in words) {
+            if (b == a) continue
+            if (canBuild(a, b)) {
+                k++
+                break
+            }
+        }
+    return k != 0
+}
 
 /**
  * Сложная
@@ -289,7 +360,31 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val g = mutableMapOf<String, MutableSet<String>>()
+    for ((key, value) in friends)
+        g[key] = value.toMutableSet()
+    for (a in 0 until friends.keys.size)
+        for (b in 0 until friends.keys.size) {
+            if (a == b) continue
+            if (g.values.elementAt(a).elementAt(0) == g.keys.elementAt(b))
+                g.values.elementAt(a).add(g.values.elementAt(b).elementAt(0))
+        }
+    var k = 0
+    for (a in 0 until friends.keys.size) {
+        for (b in 0 until friends.keys.size) {
+            if (a == b) continue
+            if (g.values.elementAt(a).elementAt(0) != g.keys.elementAt(b))
+                k++
+            if (k == friends.keys.size - 1) {
+                g[g.values.elementAt(a).elementAt(0)] = mutableSetOf()
+                k = 0
+            }
+        }
+        k = 0
+    }
+    return g
+}
 
 /**
  * Сложная
@@ -308,7 +403,16 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    var g = Pair(-1, -1)
+    for (a in 0 until list.size)
+        for (b in 0 until list.size) {
+            if (a == b) continue
+            if (list[a] + list[b] == number) g = Pair(b, a)
+        }
+    return if (g == Pair(-1, -1)) Pair(-1, -1)
+    else g
+}
 
 /**
  * Очень сложная
@@ -331,4 +435,25 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val t = treasures.toMutableMap()
+    var c = capacity
+    val q = mutableSetOf<String>()
+    var g = t.values.elementAt(0).first
+    for (a in 0 until t.values.size)
+        if (g > t.values.elementAt(a).first) {
+            g = t.values.elementAt(a).first
+        }
+    var b = 0
+    while (c > g) {
+        for (a in 0 until t.values.size)
+            if (g > t.values.elementAt(a).first) {
+                g = t.values.elementAt(a).first
+                b = a
+            }
+        c -= g
+        q.add(t.keys.elementAt(b))
+        t.remove(t.keys.elementAt(b))
+    }
+    return q
+}
