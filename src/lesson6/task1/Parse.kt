@@ -76,7 +76,7 @@ fun dateStrToDigit(str: String): String {
     if (s.size != 3) return ""
     when {
         s[1] == "января" && s[0].toInt() in 1..31 -> s[1] = "01"
-        s[1] == "февраля" && if (s[2].toInt() % 4 == 0 || s[2].toInt() == 400 && s[2].toInt() % 100 != 0)
+        s[1] == "февраля" && if (s[2].toInt() % 4 == 0 && s[2].toInt() % 100 != 0 || s[2].toInt() % 400 == 0)
             s[0].toInt() in 1..29
         else s[0].toInt() in 1..28 -> s[1] = "02"
         s[1] == "марта" && s[0].toInt() in 1..31 -> s[1] = "03"
@@ -110,7 +110,7 @@ fun dateDigitToStr(digital: String): String {
     if (s.size != 3) return ""
     when {
         s[1] == "01" && s[0].toInt() in 1..31 -> s[1] = "января"
-        s[1] == "02" && if (s[2].toInt() % 4 == 0 || s[2].toInt() == 400 && s[2].toInt() % 100 != 0)
+        s[1] == "02" && if (s[2].toInt() % 4 == 0 && s[2].toInt() % 100 != 0 || s[2].toInt() % 400 == 0)
             s[0].toInt() in 1..29
         else s[0].toInt() in 1..28 -> s[1] = "февраля"
         s[1] == "03" && s[0].toInt() in 1..31 -> s[1] = "марта"
@@ -221,6 +221,8 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
+    if (expression.isEmpty())
+        throw IllegalArgumentException()
     var e = expression
     val w = expression.split(" ").toMutableList()
     e = e.replace(" ", "")

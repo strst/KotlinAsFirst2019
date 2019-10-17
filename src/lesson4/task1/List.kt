@@ -180,11 +180,13 @@ fun times(a: List<Int>, b: List<Int>): Int {
  */
 fun polynom(p: List<Int>, x: Int): Int {
     var z = 0
-    val c = mutableListOf(1, x)
-    for (i in 2 until p.size)
-        c.add(x.toDouble().pow(i).toInt())
-    for (i in 0 until p.size)
-        z += p[i] * c[i]
+    var v = 1
+    if (p.isNotEmpty())
+        z += p[0]
+    for (i in 1 until p.size) {
+        z += p[i] * x * v
+        v *= x
+    }
     return z
 }
 
@@ -293,11 +295,14 @@ fun convertToString(n: Int, base: Int): String {
 
 fun decimal(digits: List<Int>, base: Int): Int {
     var x = 0
-    val c = mutableListOf<Int>()
-    for (i in digits.size - 1 downTo 0)
-        c.add(base.toDouble().pow(i).toInt())
-    for (i in 0 until digits.size)
-        x += digits[i] * c[i]
+    var l = 1
+    if (digits.isNotEmpty())
+        x += digits[digits.size - 1]
+    if (digits.size > 1)
+        for (i in digits.size - 2 downTo 0) {
+            x += digits[i] * l * base
+            l *= base
+        }
     return x
 }
 
@@ -352,7 +357,9 @@ fun roman(n: Int): String {
         if (z >= number[i]) {
             z -= number[i]
             x += word[i]
-        } else i++
+        } else {
+            i++
+        }
     return x
 }
 
@@ -364,88 +371,38 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
+    val z = mutableListOf(n / 1000, n % 1000)
+    val x = mutableListOf<String>()
     val hundred = listOf(
-        "сто",
-        "двести",
-        "триста",
-        "четыреста",
-        "пятьсот",
-        "шестьсот",
-        "семьсот",
-        "восемьсот",
-        "девятьсот"
+        "сто", "двести", "триста", "четыреста", "пятьсот",
+        "шестьсот", "семьсот", "восемьсот", "девятьсот"
     )
     val ten = listOf(
-        "двадцать",
-        "тридцать",
-        "сорок",
-        "пятьдесят",
-        "шестьдесят",
-        "семьдесят",
-        "восемьдесят",
-        "девяносто"
+        "двадцать", "тридцать", "сорок", "пятьдесят",
+        "шестьдесят", "семьдесят", "восемьдесят", "девяносто"
+    )
+    val ten1 = listOf(
+        "десять", "одиннадцать", "двенадцать", "тринадцать",
+        "четырнадцать", "пятнадцать", "шестнадцать",
+        "семнадцать", "восемнадцать", "девятнадцать"
     )
     val one = listOf(
-        "один",
-        "два",
-        "три",
-        "четыре",
-        "пять",
-        "шесть",
-        "семь",
-        "восемь",
-        "девять",
-        "десять",
-        "одиннадцать",
-        "двенадцать",
-        "тринадцать",
-        "четырнадцать",
-        "пятнадцать",
-        "шестнадцать",
-        "семнадцать",
-        "восемнадцать",
-        "девятнадцать"
+        "один", "два", "три", "четыре", "пять",
+        "шесть", "семь", "восемь", "девять"
     )
-    val thousand = listOf("одна", "две", "а", "и")
-    val thous = "тысяч"
-    val space = " "
-    var l = ""
-    var g = ""
-    var i = 1
-    var c = digitNumber(n)
-    var k = 0
-    while (c != 0) {
-        val x = n / (10.0.pow(digitNumber(n) - i).toInt()) % 10
-        when (c) {
-            6 -> g = hundred[x - 1]
-            5 -> if (x !in 0..1)
-                g = ten[x - 2]
-            else if (x == 1) k++
-            4 -> when {
-                k == 1 -> {
-                    g = one[x + 9] + space + thous
-                    k--
-                }
-                x in 1..2 -> g = thousand[x - 1] + space + thous + thousand[x + 1]
-                x in 3..4 -> g = one[x - 1] + space + thous + thousand[3]
-                x != 0 -> g = one[x - 1] + space + thous
-                else -> g = thous
+    val one1 = listOf("одна", "две")
+    for (i in 0..1) {
+        if (z[i] / 100 != 0) x += hundred[z[i] / 100 - 1]
+        if (z[i] / 10 % 10 in 2..9) x += ten[z[i] / 10 % 10 - 2]
+        if (z[i] % 100 in 10..19) x += ten1[z[i] % 100 - 10]
+        if (z[i] % 10 in 1..9&&z[i] % 100 !in 10..19) x += if (i == 0 && z[i] % 10 in 1..2) one1[z[i]%10-1]
+        else one[z[i] % 10 - 1]
+        if (i == 0 && z[i] != 0)
+            x += when (z[i] % 10) {
+                1 -> "тысяча"
+                in 2..4 -> "тысячи"
+                else -> "тысяч"
             }
-            3 -> if (x != 0)
-                g = hundred[x - 1]
-            2 -> if (x !in 0..1)
-                g = ten[x - 2]
-            else if (x == 1) k++
-            1 -> if (k == 1) g = one[x + 9] else if (x != 0) g = one[x - 1]
-        }
-        if (g != "") {
-            l += g + space
-            g = ""
-        }
-        i++
-        c--
     }
-    k = l.toCharArray().size
-    return if (l[k - 1] == ' ') l.substring(0..k - 2)
-    else l
+    return x.joinToString(separator=" ")
 }

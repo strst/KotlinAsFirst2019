@@ -2,6 +2,10 @@
 
 package lesson5.task1
 
+//import jdk.internal.org.jline.utils.Colors.s
+import ru.spbstu.kotlin.typeclass.kind
+import ru.spbstu.kotlin.typeclass.value
+
 /**
  * Пример
  *
@@ -135,10 +139,10 @@ fun buildGrades(grades: Map<String, Int>): MutableMap<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    for (k in a)
-        for (j in b)
-            if (k == j) return true
-    return false
+    var k = 0
+    for (i in 0 until a.size)
+        if (b.keys.contains(a.keys.elementAt(i)) && b.values.contains(a.values.elementAt(i))) k++
+    return k == a.size
 }
 
 /**
@@ -222,10 +226,22 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): MutableMap<String, Double> {
     val v = mutableMapOf<String, Double>()
     v += stockPrices
-    for ((key, value) in v)
-        for ((first, second) in stockPrices)
-            if (first == key && second != value)
-                v[key] = (second + value) / 2
+    val s = mutableListOf<Pair<String, Double>>()
+    s += stockPrices
+    var i = 0
+    while (i != s.size) {
+        if (v.containsKey(s[i].first) && v.containsValue(s[i].second)) {
+            s.removeAt(i)
+            i--
+        }
+        i++
+    }
+    for ((first, second) in s)
+        v[first] = v.getValue(first) + second
+    val e = mutableMapOf<String, Double>()
+    e += s
+    for ((key) in e)
+        if (v.contains(key)) v[key] = v.getValue(key) / 2
     return v
 }
 
@@ -245,9 +261,14 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): MutableMap<Strin
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    val l = mutableMapOf<String, Double>()
     for ((key, value) in stuff)
-        if (value.first == kind) return key
-    return null
+        if (value.first == kind) l[key] = value.second
+    if (l.isEmpty()) return null
+    var s = l.keys.elementAt(0)
+    for (i in 1 until l.size)
+        if (l.values.elementAt(i) < l.values.elementAt(i - 1)) s = l.keys.elementAt(i)
+    return s
 }
 
 /**
@@ -262,15 +283,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var c = 0
     for (a in chars)
-        for (b in word)
-            if (a == b) {
-                c++
-                break
-            }
-    return if (c != 0)
-        c == chars.size
-    else
-        false
+        if (word.contains(a))
+            c++
+    return c == chars.size && c != 0 || (chars.isEmpty() && word.isEmpty())
 }
 
 /**
@@ -285,22 +300,29 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> {
+fun extractRepeats(list: List<String>): MutableMap<String, Int> {
+    val g = list.toMutableList()
     val l = mutableMapOf<String, Int>()
-    var g = ""
-    var z = 0
-    for (a in list) {
-        for (b in list)
-            if (a == b) {
-                g = a
-                z++
+    var v = 1
+    var a = 0
+    var b = 0
+    while (a < g.size) {
+        while (b < g.size) {
+            if (a != b && g.elementAt(a) == g.elementAt(b)) {
+                g.removeAt(b)
+                v++
+                b--
             }
-        if (z != 0) break
+            b++
+        }
+        if (v > 1) {
+            l[g.elementAt(a)] = v
+            v = 1
+        }
+        b = 0
+        a++
     }
-    if (z > 1)
-        l[g] = z
     return l
-
 }
 
 /**
@@ -312,27 +334,14 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun canBuild(chars: String, word: String): Boolean {
-    var c = 0
-    for (a in chars)
-        for (b in word)
-            if (a == b) {
-                c++
-                break
-            }
-    return c == chars.length
-}
-
 fun hasAnagrams(words: List<String>): Boolean {
     var k = 0
-    for (a in words)
-        for (b in words) {
-            if (b == a) continue
-            if (canBuild(a, b)) {
+    for (a in 0 until words.size)
+        for (b in 0 until words.size)
+            if (canBuildFrom(words[a].toList(), words[b]) && b != a) {
                 k++
                 break
             }
-        }
     return k != 0
 }
 
@@ -383,6 +392,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         }
         k = 0
     }
+    if (g.values.size == 1)
+        g[g.values.elementAt(0).elementAt(0)] = mutableSetOf()
     return g
 }
 
@@ -436,6 +447,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    if (treasures.isEmpty()) return emptySet()
     val t = treasures.toMutableMap()
     var c = capacity
     val q = mutableSetOf<String>()
