@@ -95,36 +95,13 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): MutableMap<Int, List<String>> {
-    if (grades == mapOf<String, Int>()) return mutableMapOf()
-    val v = mutableMapOf<Int, List<String>>()
-    var x1 = mutableListOf<Int>()
-    var x2 = mutableListOf<MutableList<String>>()
-    for ((j, k) in grades) {
-        x1.add(k)
-        x2.add(mutableListOf(j))
-    }
-    x1 = x1.reversed().toMutableList()
-    x2 = x2.reversed().toMutableList()
-    var i = 0
-    var k = 0
-    while (i != -1) {
-        while (k != -1) {
-            k++
-            if (k == x1.size) break
-            if (x1[i] == x1[k]) {
-                x1.removeAt(k)
-                x2[i].plusAssign(x2[k])
-                x2.removeAt(k)
-                k--
-            }
-        }
-        i++
-        if (i == x1.size) break
-        k = i
-    }
-    for (z in 0 until x1.size)
-        v[x1[z]] = x2[z]
+fun buildGrades(grades: Map<String, Int>): MutableMap<Int, MutableList<String>> {
+    val v = mutableMapOf<Int, MutableList<String>>()
+    for ((key, value) in grades)
+        if (v.contains(value))
+            if (v[value]!!.contains(key))
+            else v[value]!!.add(key)
+        else v[value] = mutableListOf(key)
     return v
 }
 
@@ -140,8 +117,8 @@ fun buildGrades(grades: Map<String, Int>): MutableMap<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     var k = 0
-    for (i in 0 until a.size)
-        if (b.keys.contains(a.keys.elementAt(i)) && b.values.contains(a.values.elementAt(i))) k++
+    for ((key, value) in a)
+        if (Pair(key, value) in b.toList()) k++
     return k == a.size
 }
 
@@ -160,13 +137,9 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMap<String, String> {
-    val x = mutableListOf<String>()
-    for (k in b)
-        for (j in a)
-            if (k == j)
-                x += k.key
-    for (i in x)
-        a.remove(i)
+    for ((key, value) in b)
+        if (Pair(key, value) in a.toList())
+            a.remove(key)
     return a
 }
 
@@ -180,8 +153,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMa
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val set = mutableSetOf<String>()
     for (k in a)
-        for (j in b)
-            if (k == j) set.add(k)
+        if (b.contains(k)) set.add(k)
     return set.toList()
 }
 
@@ -205,11 +177,10 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val c = mutableMapOf<String, String>()
     c += mapA
-    c += mapB
-    for ((key, value) in mapA)
-        for ((key1, value1) in mapB)
-            if (key1 == key && value != value1)
-                c[key1] = "$value, $value1"
+    for ((key, value) in mapB)
+        if (Pair(key, value) !in c.toList() && key in c)
+            c[key] += ", $value"
+        else c[key] = value
     return c
 }
 
@@ -225,23 +196,17 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): MutableMap<String, Double> {
     val v = mutableMapOf<String, Double>()
-    v += stockPrices
-    val s = mutableListOf<Pair<String, Double>>()
-    s += stockPrices
-    var i = 0
-    while (i != s.size) {
-        if (v.containsKey(s[i].first) && v.containsValue(s[i].second)) {
-            s.removeAt(i)
-            i--
+    val r = mutableMapOf<String, Int>()
+    for ((first, second) in stockPrices)
+        if (first in v) {
+            v[first] = v.getOrDefault(first, 0.0) + second
+            r[first] = r.getOrDefault(first, 0) + 1
+        } else {
+            v[first] = second
+            r[first] = 1
         }
-        i++
-    }
-    for ((first, second) in s)
-        v[first] = v.getValue(first) + second
-    val e = mutableMapOf<String, Double>()
-    e += s
-    for ((key) in e)
-        if (v.contains(key)) v[key] = v.getValue(key) / 2
+    for ((key, value) in r)
+        v[key] = v.getOrDefault(key, 0.0) / value
     return v
 }
 
@@ -261,14 +226,14 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): MutableMap<Strin
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    val l = mutableMapOf<String, Double>()
+    val l = mutableMapOf("" to Double.MAX_VALUE)
     for ((key, value) in stuff)
-        if (value.first == kind) l[key] = value.second
-    if (l.isEmpty()) return null
-    var s = l.keys.elementAt(0)
-    for (i in 1 until l.size)
-        if (l.values.elementAt(i) < l.values.elementAt(i - 1)) s = l.keys.elementAt(i)
-    return s
+        if (value.first == kind && value.second < l.values.elementAt(0)) {
+            l.remove(l.keys.elementAt(0))
+            l[key] = value.second
+        }
+    return if (l == mutableMapOf("" to Double.MAX_VALUE)) null
+    else l.keys.elementAt(0)
 }
 
 /**
@@ -285,7 +250,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     for (a in chars)
         if (word.contains(a))
             c++
-    return c == chars.size && c != 0 || (chars.isEmpty() && word.isEmpty())
+    return c == chars.size && c != 0 || word.isEmpty()
 }
 
 /**
@@ -301,28 +266,15 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
 fun extractRepeats(list: List<String>): MutableMap<String, Int> {
-    val g = list.toMutableList()
-    val l = mutableMapOf<String, Int>()
-    var v = 1
-    var a = 0
-    var b = 0
-    while (a < g.size) {
-        while (b < g.size) {
-            if (a != b && g.elementAt(a) == g.elementAt(b)) {
-                g.removeAt(b)
-                v++
-                b--
-            }
-            b++
-        }
-        if (v > 1) {
-            l[g.elementAt(a)] = v
-            v = 1
-        }
-        b = 0
-        a++
-    }
-    return l
+    val m = mutableMapOf<String, Int>()
+    for (i in list)
+        if (i in m) m[i] = m.getOrDefault(i, 0) + 1
+        else m[i] = 1
+    val r = mutableMapOf<String, Int>()
+    for ((key, value) in m)
+        if (value > 1)
+            r[key] = value
+    return r
 }
 
 /**

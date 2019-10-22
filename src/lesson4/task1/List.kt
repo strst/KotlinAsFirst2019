@@ -179,10 +179,9 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    var z = 0
+    if (p.isEmpty()) return 0
+    var z = p[0]
     var v = 1
-    if (p.isNotEmpty())
-        z += p[0]
     for (i in 1 until p.size) {
         z += p[i] * x * v
         v *= x
@@ -294,10 +293,9 @@ fun convertToString(n: Int, base: Int): String {
  */
 
 fun decimal(digits: List<Int>, base: Int): Int {
-    var x = 0
+    if (digits.isEmpty()) return 0
+    var x = digits[digits.size - 1]
     var l = 1
-    if (digits.isNotEmpty())
-        x += digits[digits.size - 1]
     if (digits.size > 1)
         for (i in digits.size - 2 downTo 0) {
             x += digits[i] * l * base
@@ -395,14 +393,16 @@ fun russian(n: Int): String {
         if (z[i] / 100 != 0) x += hundred[z[i] / 100 - 1]
         if (z[i] / 10 % 10 in 2..9) x += ten[z[i] / 10 % 10 - 2]
         if (z[i] % 100 in 10..19) x += ten1[z[i] % 100 - 10]
-        if (z[i] % 10 in 1..9&&z[i] % 100 !in 10..19) x += if (i == 0 && z[i] % 10 in 1..2) one1[z[i]%10-1]
+        if (z[i] % 10 in 1..9 && z[i] % 100 !in 10..19) x += if (i == 0 && z[i] % 10 in 1..2) one1[z[i] % 10 - 1]
         else one[z[i] % 10 - 1]
         if (i == 0 && z[i] != 0)
-            x += when (z[i] % 10) {
-                1 -> "тысяча"
-                in 2..4 -> "тысячи"
-                else -> "тысяч"
-            }
+            x += if (z[i] / 10 % 10 != 1)
+                when (z[i] % 10) {
+                    1 -> "тысяча"
+                    in 2..4 -> "тысячи"
+                    else -> "тысяч"
+                }
+            else "тысяч"
     }
-    return x.joinToString(separator=" ")
+    return x.joinToString(separator = " ")
 }
