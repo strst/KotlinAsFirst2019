@@ -248,9 +248,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var c = 0
     for (a in chars)
-        if (word.contains(a))
+        if (word.toUpperCase().toSet().contains(a.toUpperCase()))
             c++
-    return c == chars.size && c != 0 || word.isEmpty()
+    return c >= word.toSet().size
 }
 
 /**
@@ -323,29 +323,15 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val g = mutableMapOf<String, MutableSet<String>>()
-    for ((key, value) in friends)
+    for ((key, value) in friends) {
         g[key] = value.toMutableSet()
-    for (a in 0 until friends.keys.size)
-        for (b in 0 until friends.keys.size) {
-            if (a == b) continue
-            if (g.values.elementAt(a).elementAt(0) == g.keys.elementAt(b))
-                g.values.elementAt(a).add(g.values.elementAt(b).elementAt(0))
-        }
-    var k = 0
-    for (a in 0 until friends.keys.size) {
-        for (b in 0 until friends.keys.size) {
-            if (a == b) continue
-            if (g.values.elementAt(a).elementAt(0) != g.keys.elementAt(b))
-                k++
-            if (k == friends.keys.size - 1) {
-                g[g.values.elementAt(a).elementAt(0)] = mutableSetOf()
-                k = 0
-            }
-        }
-        k = 0
+        for (a in 0 until value.size)
+            if (friends.containsKey(value.elementAt(a)))
+                g[key]!!.addAll(friends[value.elementAt(a)] ?: error(""))
+            else
+                g[value.elementAt(a)] = mutableSetOf()
+        g[key] = g[key]!!.minus(key).toMutableSet()
     }
-    if (g.values.size == 1)
-        g[g.values.elementAt(0).elementAt(0)] = mutableSetOf()
     return g
 }
 
@@ -409,7 +395,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             g = t.values.elementAt(a).first
         }
     var b = 0
-    while (c > g) {
+    while (c >= g) {
         for (a in 0 until t.values.size)
             if (g > t.values.elementAt(a).first) {
                 g = t.values.elementAt(a).first
