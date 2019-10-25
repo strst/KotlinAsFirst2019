@@ -226,14 +226,17 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): MutableMap<Strin
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    val l = mutableMapOf("" to Double.MAX_VALUE)
+    if (stuff.values.toMap()[kind] == null) return null
+    val l = mutableMapOf(
+        stuff.keys.elementAt(stuff.values.indexOf(Pair(kind, stuff.values.toMap()[kind]))) to
+                (stuff.values.toMap()[kind] ?: error(""))
+    )
     for ((key, value) in stuff)
         if (value.first == kind && value.second < l.values.elementAt(0)) {
             l.remove(l.keys.elementAt(0))
             l[key] = value.second
         }
-    return if (l == mutableMapOf("" to Double.MAX_VALUE)) null
-    else l.keys.elementAt(0)
+    return l.keys.elementAtOrNull(0)
 }
 
 /**
@@ -247,8 +250,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var c = 0
-    for (a in chars)
-        if (word.toUpperCase().toSet().contains(a.toUpperCase()))
+    for (a in word.toSet())
+        if (chars.toString().toUpperCase().toSet().contains(a.toUpperCase()))
             c++
     return c >= word.toSet().size
 }
@@ -395,7 +398,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             g = t.values.elementAt(a).first
         }
     var b = 0
-    while (c >= g) {
+    while (c > g) {
         for (a in 0 until t.values.size)
             if (g > t.values.elementAt(a).first) {
                 g = t.values.elementAt(a).first
