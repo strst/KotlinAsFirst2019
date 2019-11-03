@@ -2,6 +2,7 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
 import java.lang.IllegalArgumentException
 
 /**
@@ -59,6 +60,16 @@ fun main() {
     }
 }
 
+val month = listOf(
+    "", "января", "февраля", "марта", "апреля",
+    "мая", "июня", "июля", "августа", "сентября",
+    "октября", "ноября", "декабря"
+)
+
+fun num(str: String): Boolean {
+    for (i in str) if (!i.isDigit()) return true
+    return false
+}
 
 /**
  * Средняя
@@ -74,23 +85,9 @@ fun main() {
 fun dateStrToDigit(str: String): String {
     val s = str.split(" ").toMutableList()
     if (s.size != 3) return ""
-    when {
-        s[1] == "января" && s[0].toInt() in 1..31 -> s[1] = "01"
-        s[1] == "февраля" && if (s[2].toInt() % 4 == 0 && s[2].toInt() % 100 != 0 || s[2].toInt() % 400 == 0)
-            s[0].toInt() in 1..29
-        else s[0].toInt() in 1..28 -> s[1] = "02"
-        s[1] == "марта" && s[0].toInt() in 1..31 -> s[1] = "03"
-        s[1] == "апреля" && s[0].toInt() in 1..30 -> s[1] = "04"
-        s[1] == "мая" && s[0].toInt() in 1..31 -> s[1] = "05"
-        s[1] == "июня" && s[0].toInt() in 1..30 -> s[1] = "06"
-        s[1] == "июля" && s[0].toInt() in 1..31 -> s[1] = "07"
-        s[1] == "августа" && s[0].toInt() in 1..31 -> s[1] = "08"
-        s[1] == "сентября" && s[0].toInt() in 1..30 -> s[1] = "09"
-        s[1] == "октября" && s[0].toInt() in 1..31 -> s[1] = "10"
-        s[1] == "ноября" && s[0].toInt() in 1..30 -> s[1] = "11"
-        s[1] == "декабря" && s[0].toInt() in 1..31 -> s[1] = "12"
-        else -> return ""
-    }
+    s[1] = month.indexOf(s[1]).toString()
+    val d = daysInMonth(s[1].toInt(), s[2].toInt())
+    if (d < s[0].toInt() || d == 1) return ""
     return String.format("%02d.%02d.%d", s[0].toInt(), s[1].toInt(), s[2].toInt())
 }
 
@@ -105,26 +102,11 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-
     val s = digital.split(".").toMutableList()
-    if (s.size != 3) return ""
-    when {
-        s[1] == "01" && s[0].toInt() in 1..31 -> s[1] = "января"
-        s[1] == "02" && if (s[2].toInt() % 4 == 0 && s[2].toInt() % 100 != 0 || s[2].toInt() % 400 == 0)
-            s[0].toInt() in 1..29
-        else s[0].toInt() in 1..28 -> s[1] = "февраля"
-        s[1] == "03" && s[0].toInt() in 1..31 -> s[1] = "марта"
-        s[1] == "04" && s[0].toInt() in 1..30 -> s[1] = "апреля"
-        s[1] == "05" && s[0].toInt() in 1..31 -> s[1] = "мая"
-        s[1] == "06" && s[0].toInt() in 1..30 -> s[1] = "июня"
-        s[1] == "07" && s[0].toInt() in 1..31 -> s[1] = "июля"
-        s[1] == "08" && s[0].toInt() in 1..31 -> s[1] = "августа"
-        s[1] == "09" && s[0].toInt() in 1..30 -> s[1] = "сентября"
-        s[1] == "10" && s[0].toInt() in 1..31 -> s[1] = "октября"
-        s[1] == "11" && s[0].toInt() in 1..30 -> s[1] = "ноября"
-        s[1] == "12" && s[0].toInt() in 1..31 -> s[1] = "декабря"
-        else -> return ""
-    }
+    if (s.size != 3 || num(s[0]) || num(s[1]) || num(s[2])) return ""
+    val d = daysInMonth(s[1].toInt(), s[2].toInt())
+    if (d < s[0].toInt() || d == 1) return ""
+    s[1] = month[s[1].toInt()]
     return String.format("%d %s %d", s[0].toInt(), s[1], s[2].toInt())
 }
 
@@ -148,7 +130,7 @@ fun flattenPhoneNumber(phone: String): String {
         if (i == 0 && phone[i] == '+')
             l += phone[i]
         else if (phone[i] == '(' && phone[i + 1] == ')') return ""
-        else if (phone[i].toInt() in 48..57) l += phone[i]
+        else if (phone[i].isDigit()) l += phone[i]
         else if (phone[i] == '(' || phone[i] == ')' || phone[i] == '-' || phone[i] == ' ')
         else return ""
     return l
@@ -165,21 +147,12 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val j = jumps.split('%', '-', ' ').toMutableList()
-    var i = 0
-    while (i < j.size) {
-        if (i == j.size) break
-        if (j[i] == " " || j[i] == "-" || j[i] == "%" || j[i] == "") {
-            j.removeAt(i)
-            i--
-        } else if (j[i].toIntOrNull() == null) return -1
-        i++
-    }
-    if (j.size == 0) return -1
-    i = j[0].toInt()
-    for (a in j)
-        if (a.toInt() > i) i = a.toInt()
-    return i
+    var c = 0
+    for (i in jumps)
+        if (i != '-' && i != ' ' && i != '%' && !i.isDigit()) return -1
+        else if (i.isDigit()) c++
+    if (c == 0) return -1
+    return jumps.split(" ").sorted()[0].toInt()
 }
 
 /**
@@ -194,21 +167,12 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    val j = jumps.split('%', '-', ' ').toMutableList()
-    var i = 0
-    while (i < j.size) {
-        if (i == j.size) break
-        if (j[i] == " " || j[i] == "-" || j[i] == "%" || j[i] == "" || j[i] == "+" || if (i != j.size - 1) j[i + 1] != "+" else j[i] == "") {
-            j.removeAt(i)
-            i--
-        } else if (j[i].toIntOrNull() == null) return -1
-        i++
-    }
-    if (j.size == 0) return -1
-    i = j[0].toInt()
-    for (a in j)
-        if (a.toInt() > i) i = a.toInt()
-    return i
+    var c = 0
+    for (i in jumps)
+        if (i != '-' && i != ' ' && i != '%' && !i.isDigit() && i != '+') return -1
+        else if (i.isDigit()) c++
+    if (c == 0) return -1
+    return jumps.split(" ").sorted()[0].toInt()
 }
 
 /**
@@ -221,32 +185,20 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (expression.isEmpty())
-        throw IllegalArgumentException()
-    var e = expression
-    val w = expression.split(" ").toMutableList()
-    e = e.replace(" ", "")
-    for (a in 0 until e.length)
-        if (e[a].toInt() in 43..45 && e[a + 1].toInt() in 43..45 || e[0].toInt() in 43..45)
-            throw IllegalArgumentException()
-    for (a in 0..w.size - 2)
-        if (w[a].toIntOrNull() != null && w[a + 1].toIntOrNull() != null || (w[a].toIntOrNull() == null && w[a] != "+" && w[a] != "-"))
-            throw IllegalArgumentException()
-    val i = 1
-    while (i <= w.size - 2) {
-        if (w[i] == "+") {
-            val k = w[i - 1].toInt() + w[i + 1].toInt()
-            w[i] = k.toString()
-            w.removeAt(i + 1)
-            w.removeAt(i - 1)
-        } else if (w[i] == "-") {
-            val k = w[i - 1].toInt() - w[i + 1].toInt()
-            w[i] = k.toString()
-            w.removeAt(i + 1)
-            w.removeAt(i - 1)
-        }
+    val g = expression.split(" ")
+    if (num(g[0])) throw IllegalArgumentException()
+    var r = g[0].toInt()
+    g.indices.asIterable().forEach {
+        if (!num(g[it]))
+            when {
+                it == g.size - 1 -> return@forEach
+                num(g[it + 2]) -> throw IllegalArgumentException()
+                g[it + 1] == "+" -> r += g[it + 2].toInt()
+                g[it + 1] == "-" -> r -= g[it + 2].toInt()
+                else -> throw IllegalArgumentException()
+            }
     }
-    return w[0].toInt()
+    return r
 }
 
 /**
