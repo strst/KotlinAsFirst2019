@@ -122,19 +122,11 @@ fun dateDigitToStr(digital: String): String {
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку.
  *
- * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
+ * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах."+7 (921) 123-45-67"
  */
-fun flattenPhoneNumber(phone: String): String {
-    var l = ""
-    for (i in 0 until phone.length)
-        if (i == 0 && phone[i] == '+')
-            l += phone[i]
-        else if (phone[i] == '(' && phone[i + 1] == ')') return ""
-        else if (phone[i].isDigit()) l += phone[i]
-        else if (phone[i] == '(' || phone[i] == ')' || phone[i] == '-' || phone[i] == ' ')
-        else return ""
-    return l
-}
+fun flattenPhoneNumber(phone: String): String =
+    if (!phone.matches(Regex("""(\+\d+)? ?(\([\d\-\s]+\))? ?([\d\-\s])*\d+"""))) ""
+    else phone.filter { it != ' ' && it != '-' && it != '(' && it != ')' }
 
 /**
  * Средняя
@@ -146,14 +138,10 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int {
-    var c = 0
-    for (i in jumps)
-        if (i != '-' && i != ' ' && i != '%' && !i.isDigit()) return -1
-        else if (i.isDigit()) c++
-    if (c == 0) return -1
-    return jumps.split(" ").sorted()[0].toInt()
-}
+fun bestLongJump(jumps: String): Int =
+    if (jumps.filter { it != ' ' }.contains(Regex("""[^\d-%]"""))) -1
+    else if (!jumps.contains(Regex("""\d"""))) -1
+    else jumps.split(" ").filter { it != "-" && it != "%" }.max()!!.toInt()
 
 /**
  * Сложная
@@ -166,14 +154,11 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int {
-    var c = 0
-    for (i in jumps)
-        if (i != '-' && i != ' ' && i != '%' && !i.isDigit() && i != '+') return -1
-        else if (i.isDigit()) c++
-    if (c == 0) return -1
-    return jumps.split(" ").sorted()[0].toInt()
-}
+fun bestHighJump(jumps: String): Int =
+    if (jumps.filter { it != ' ' }.contains(Regex("""[^\d-%+]"""))) -1
+    else jumps.split(" ")
+        .filterIndexed { i, v -> !num(v) && jumps.split(" ").elementAt(i + 1).matches(Regex("""\+.*""")) }
+        .max()!!.toInt()
 
 /**
  * Сложная
@@ -185,20 +170,13 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    val g = expression.split(" ")
-    if (num(g[0])) throw IllegalArgumentException()
-    var r = g[0].toInt()
-    g.indices.asIterable().forEach {
-        if (!num(g[it]))
-            when {
-                it == g.size - 1 -> return@forEach
-                num(g[it + 2]) -> throw IllegalArgumentException()
-                g[it + 1] == "+" -> r += g[it + 2].toInt()
-                g[it + 1] == "-" -> r -= g[it + 2].toInt()
-                else -> throw IllegalArgumentException()
-            }
-    }
-    return r
+    val result = expression.split(" ").toMutableList()
+    if (!expression.matches(Regex("""(\d+ (\+?-?) )*\d+"""))) throw IllegalArgumentException()
+    var a = result[0].toInt()
+    for (i in 2 until result.size step (2))
+        if (result[i - 1] == "+") a += result[i].toInt()
+        else a -= result[i].toInt()
+    return a
 }
 
 /**
@@ -239,22 +217,15 @@ fun firstDuplicateIndex(str: String): Int {
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String {
-    if (description == "") return ""
-    val d = description.split(" ", ";")
-    val q = mutableListOf<Double>()
-    for (i in 0 until d.size) {
-        if (d[i].isNotEmpty())
-            if (d[i][0].toInt() in 49..57)
-                q.add(d[i].toDouble())
+fun mostExpensive(description: String): String =
+    if (!Regex("""([A-zA-я]+ \d+(\.\d+)?; )*([A-zA-я]+ \d+(\.\d+)?)""").matches(description)) ""
+    else {
+        val a = description.split(" ", ";")
+        val b = mutableListOf<Double>()
+        for (i in 1..a.size step 3)
+            b.add(a.elementAt(i).toDouble())
+        a.elementAt(a.indexOf(b.max()!!.toString()) - 1)
     }
-    var k = q[0]
-    for (i in q)
-        if (i > k) k = i
-    for (i in 0 until d.size)
-        if (k.toString() == d[i]) return d[i - 1]
-    return k.toString()
-}
 
 /**
  * Сложная
@@ -267,23 +238,22 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int {
-    val x = roman.replace("CM", "DCD")
-        .replace("M", "DD")
-        .replace("CD", "CCCC")
-        .replace("D", "CCCCC")
-        .replace("XC", "LXL")
-        .replace("C", "LL")
-        .replace("XL", "XXXX")
-        .replace("L", "XXXXX")
-        .replace("IX", "VIV")
-        .replace("X", "VV")
-        .replace("IV", "IIII")
-        .replace("V", "IIIII")
-    for (i in x)
-        if (i != 'I') return -1
-    return x.length
-}
+fun fromRoman(roman: String): Int =
+    if (roman.isEmpty() || !roman.matches(Regex("M*(CM|DC{0,3}|CD|C{0,3})?(XC|LX{0,3}|XL|X{0,3})?(IX|VI{0,3}|IV|I{0,3})?"))) -1
+    else {
+        var r1 = roman
+        var res = 0
+        val numbers = mapOf(
+            "IV" to 4, "IX" to 9, "I" to 1, "V" to 5, "XL" to 40,
+            "XC" to 90, "CD" to 400, "CM" to 900, "X" to 10,
+            "L" to 50, "C" to 100, "D" to 500, "M" to 1000
+        )
+        for ((key, value) in numbers) {
+            res += (Regex(key).findAll(r1)).count() * value
+            r1 = r1.replace(key, "")
+        }
+        res
+    }
 
 /**
  * Очень сложная
