@@ -236,7 +236,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val w = word.toUpperCase().toSet()
-    return chars.toSet().map { it.toUpperCase() }.intersect(w) == w && chars.isNotEmpty()
+    return chars.toSet().map { it.toUpperCase() }.intersect(w) == w
 }
 
 /**
@@ -369,7 +369,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    var t = treasures.filter { it.value.first < capacity }.toMutableMap()
+    var t = treasures.filter { it.value.first <= capacity }.toMutableMap()
     if (t.isEmpty()) return emptySet()
     t = findtt(t)
     val l = mutableListOf<Int>()
