@@ -369,76 +369,25 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    var t = treasures.filter { it.value.first <= capacity }.toMutableMap()
+    val t = treasures.filter { it.value.first <= capacity }
     if (t.isEmpty()) return emptySet()
-    t = findtt(t)
-    val l = mutableListOf<Int>()
-    t.forEach { l += it.value.first }
-    val r = mutableMapOf<Int, Int>()
-    t.forEach { r += it.value }
-    val it = finditeration(l, capacity)
-    return findresult(it, r, t)
-}
-
-fun findtt(t: MutableMap<String, Pair<Int, Int>>): MutableMap<String, Pair<Int, Int>> {
-    val r = mutableMapOf<String, Pair<Int, Int>>()
-    r += t
-    for ((first) in t.values) {
-        val rs = t.values.filter { it.first == first }
-        if (rs.size > 1) {
-            rs.filter { it != rs.maxBy { it1 -> it1.second } }.forEach {
-                r.remove(t.keys.elementAt(t.values.indexOf(it)))
+    val v = IntArray(capacity + 1) { 0 }
+    val s = Array<Set<String>>(capacity + 1) { emptySet() }
+    (t.values.minBy { it.first }!!.first..capacity).forEach { weight ->
+        var mxv = v[weight - 1]
+        var mxs = s[weight - 1]
+        t.forEach { (g, p) ->
+            val it = weight - p.first
+            if (it >= 0 && g !in s[it]) {
+                val sv = p.second + v[it]
+                if (sv > mxv) {
+                    mxv = sv
+                    mxs = s[it] + g
+                }
             }
         }
+        v[weight] = mxv
+        s[weight] = mxs
     }
-    return r
-}
-
-fun finditeration(l: MutableList<Int>, c: Int): MutableList<MutableSet<Int>> {
-    var z = 1
-    var k = 1
-    val res = mutableMapOf<MutableSet<Int>, MutableList<Int>>()
-    l.forEach { res[mutableSetOf(it)] = mutableListOf(it) }
-    var reslink = mutableMapOf<MutableSet<Int>, MutableList<Int>>()
-    reslink.plusAssign(res)
-    while (z != 0) {
-        z = 0
-        for (i in l) {
-            for ((key, value) in reslink)
-                if (i in key) continue
-                else if (i + value[0] <= c) {
-                    res[(key + mutableSetOf(i)).toMutableSet()] = mutableListOf(i + value[0])
-                    z++
-                }
-        }
-        k++
-        reslink = res.filter { it.key.size == k }.toMutableMap()
-    }
-    reslink.plusAssign(res)
-    for (i in reslink)
-        for (j in reslink) {
-            if (i == j) continue
-            if (i.key.containsAll(j.key)) res.remove(j.key)
-        }
-    val result = mutableListOf<MutableSet<Int>>()
-    res.forEach { (it, _) -> result.add(it) }
-    return result
-}
-
-fun findresult(
-    it: MutableList<MutableSet<Int>>,
-    r: MutableMap<Int, Int>,
-    t: MutableMap<String, Pair<Int, Int>>
-): Set<String> {
-    val result = mutableMapOf<MutableSet<Int>, Int>()
-    var z = 0
-    it.forEach {
-        it.forEach { it1 -> z += r[it1]!! }
-        result[it] = z
-        z = 0
-    }
-    val r1 = result.maxBy { it.value }!!
-    val res = mutableSetOf<String>()
-    r1.key.forEach { res += t.keys.elementAt(r.keys.indexOf(it)) }
-    return res
+    return s[capacity]
 }
