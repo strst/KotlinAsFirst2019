@@ -84,7 +84,7 @@ fun num(str: String): Boolean {
  */
 fun dateStrToDigit(str: String): String {
     val s = str.split(" ").toMutableList()
-    if (s.size != 3) return ""
+    if (s.size != 3 || num(s[0]) || num(s[2])) return ""
     s[1] = month.indexOf(s[1]).toString()
     val d = daysInMonth(s[1].toInt(), s[2].toInt())
     if (d < s[0].toInt() || d == 1) return ""
@@ -189,18 +189,12 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val s = str.split(" ").toMutableList()
-    var g = 0
-    for (a in 0..s.size - 2)
-        if (s[a].toUpperCase() == s[a + 1].toUpperCase()) g = a
-    var k = ""
-    var e = 0
-    for (a in 0 until str.length) {
-        k += str[a]
-        if (str[a] == ' ') {
-            if (e == g) return a - k.length + 1
-            k = ""
-            e++
+    val s = str.toUpperCase().split(" ")
+    (0..s.size - 2).forEach {
+        if (s[it] == s[it + 1]) {
+            var z = 0
+            (0..it).forEach { it1 -> z += s[it1].length;z++ }
+            return z - s[it].length - 1
         }
     }
     return -1
@@ -221,6 +215,7 @@ fun mostExpensive(description: String): String =
     if (!Regex("""([A-zA-я]+ \d+(\.\d+)?; )*([A-zA-я]+ \d+(\.\d+)?)""").matches(description)) ""
     else {
         val a = description.split(" ", ";")
+        a.forEach { if (it == "0") return "" }
         val b = mutableListOf<Double>()
         for (i in 1..a.size step 3)
             b.add(a.elementAt(i).toDouble())
