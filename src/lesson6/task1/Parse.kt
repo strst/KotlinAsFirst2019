@@ -211,16 +211,18 @@ fun firstDuplicateIndex(str: String): Int {
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String =
+fun mostExpensive(description: String): Any =
     if (!Regex("""([A-zA-я\d]+ \d+(\.\d+)?; )*([A-zA-я\d]+ \d+(\.\d+)?)""").matches(description)) ""
     else {
         val a = description.split(" ", ";").toMutableList()
-        val b = mutableListOf<Double>()
-        for (i in 1..a.size step 3) {
-            if (a.elementAt(i).matches(Regex("""\d+"""))) a[i] += ".0"
-            b.add(a[i].toDouble())
-        }
-        a.elementAt(a.indexOf(b.max()!!.toString()) - 1)
+        var name = ""
+        var number = -1.0
+        for (i in 0..a.size - 2 step 3)
+            if (a[i + 1].toDouble() > number) {
+                number = a[i + 1].toDouble()
+                name = a[i]
+            }
+        name
     }
 
 /**
@@ -311,10 +313,10 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     when {
                         commands[it] == '[' -> c++
                         commands[it] == ']' -> c--
-                        c == 0 -> {
-                            k = it
-                            break@loop
-                        }
+                    }
+                    if (c == 0) {
+                        k = it
+                        break@loop
                     }
                 }
             } else bracket.add(k)
