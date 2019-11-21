@@ -212,7 +212,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String =
-    if (!Regex("""([A-zA-я\d]+ \d+(\.\d+)?; )*([A-zA-я\d]+ \d+(\.\d+)?)""").matches(description)) ""
+    if (!Regex("""(.* \d+(\.\d+)?; )*(.* \d+(\.\d+)?)""").matches(description)) ""
     else {
         val a = description.split(" ", ";").toMutableList()
         var name = ""
@@ -289,8 +289,7 @@ fun fromRoman(roman: String): Int =
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
-/*{
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     require(!Regex("""[^\[\]+><-]+""").containsMatchIn(commands.filter { it != ' ' }))
     require(commands.filter { it == '[' }.length == commands.filter { it == ']' }.length)
     val l = mutableListOf<Int>()
@@ -328,4 +327,4 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TO
         lim++
     }
     return l
-}*/
+}
