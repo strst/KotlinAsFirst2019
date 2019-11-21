@@ -214,12 +214,13 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String =
     if (!Regex("""([A-zA-я]+ \d+(\.\d+)?; )*([A-zA-я]+ \d+(\.\d+)?)""").matches(description)) ""
     else {
-        val a = description.split(" ", ";")
-        a.forEach { if (it == "0") return "" }
+        val a = description.split(" ", ";").toMutableList()
+        a.indices.forEach { if (a[it].matches(Regex("""\d+"""))) a[it] += ".0" }
         val b = mutableListOf<Double>()
         for (i in 1..a.size step 3)
             b.add(a.elementAt(i).toDouble())
-        a.elementAt(a.indexOf(b.max()!!.toString()) - 1)
+        val r = b.max()!!.toString()
+        a.elementAt(a.indexOf(r) - 1)
     }
 
 /**
@@ -286,4 +287,42 @@ fun fromRoman(roman: String): Int =
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    require(Regex("""[\[\]+><-]+""").matches(commands.filter { it != ' ' }))
+    require(commands.filter { it == '[' }.length == commands.filter { it == ']' }.length)
+    val l = mutableListOf<Int>()
+    for (i in 0 until cells) {
+        l.add(0)
+    }
+    var i = cells / 2
+    var k = 0
+    var lim = 0
+    val bracket = mutableListOf<Int>()
+    while (k != commands.length && lim != limit) {
+        check(i in 0 until cells)
+        when (commands[k]) {
+            '+' -> l[i] += 1
+            '-' -> l[i] -= 1
+            '>' -> i++
+            '<' -> i--
+            '[' -> if (l[i] == 0) {
+                var c = 0
+                loop@ for (it in k until commands.length) {
+                    when {
+                        commands[it] == '[' -> c++
+                        commands[it] == ']' -> c--
+                        c == 0 -> {
+                            k = it
+                            break@loop
+                        }
+                    }
+                }
+            } else bracket.add(k)
+            ']' -> if (l[i] != 0) k = bracket.last()
+            else bracket.remove(bracket.last())
+        }
+        k++
+        lim++
+    }
+    return l
+}
