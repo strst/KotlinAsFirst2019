@@ -212,15 +212,15 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String =
-    if (!Regex("""([A-zA-я]+ \d+(\.\d+)?; )*([A-zA-я]+ \d+(\.\d+)?)""").matches(description)) ""
+    if (!Regex("""([A-zA-я\d]+ \d+(\.\d+)?; )*([A-zA-я\d]+ \d+(\.\d+)?)""").matches(description)) ""
     else {
         val a = description.split(" ", ";").toMutableList()
-        a.indices.forEach { if (a[it].matches(Regex("""\d+"""))) a[it] += ".0" }
         val b = mutableListOf<Double>()
-        for (i in 1..a.size step 3)
-            b.add(a.elementAt(i).toDouble())
-        val r = b.max()!!.toString()
-        a.elementAt(a.indexOf(r) - 1)
+        for (i in 1..a.size step 3) {
+            if (a.elementAt(i).matches(Regex("""\d+"""))) a[i] += ".0"
+            b.add(a[i].toDouble())
+        }
+        a.elementAt(a.indexOf(b.max()!!.toString()) - 1)
     }
 
 /**
@@ -288,7 +288,7 @@ fun fromRoman(roman: String): Int =
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    require(Regex("""[\[\]+><-]+""").matches(commands.filter { it != ' ' }))
+    require(!Regex("""[^\[\]+><-]+""").containsMatchIn(commands.filter { it != ' ' }))
     require(commands.filter { it == '[' }.length == commands.filter { it == ']' }.length)
     val l = mutableListOf<Int>()
     for (i in 0 until cells) {
