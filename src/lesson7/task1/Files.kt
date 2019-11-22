@@ -156,7 +156,15 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    var z = 0
+    val m = mutableListOf<String>()
+    for (l in File(inputName).readLines()) {
+        val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
+        if (r.length > z)
+            z = r.length
+        m.add(r)
+    }
+
 }
 
 /**

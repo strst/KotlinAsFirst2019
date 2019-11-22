@@ -291,7 +291,10 @@ fun fromRoman(roman: String): Int =
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     require(!Regex("""[^\[\]+><-]+""").containsMatchIn(commands.filter { it != ' ' }))
-    require(commands.filter { it == '[' }.length == commands.filter { it == ']' }.length)
+    var r = commands.filter { it == '[' || it == ']' }
+    for (i in 0 until r.filter { it == '[' }.length)
+        r = r.replace("[]", "")
+    require(r.isEmpty())
     val l = mutableListOf<Int>()
     for (i in 0 until cells) {
         l.add(0)
@@ -319,13 +322,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                         break@loop
                     }
                 }
-                require(c == 0)
             } else bracket.add(k)
-            ']' -> when {
-                bracket.isEmpty() -> require(false)
-                l[i] != 0 -> k = bracket.last()
-                else -> bracket.remove(bracket.last())
-            }
+            ']' -> if (l[i] != 0) k = bracket.last()
+            else bracket.remove(bracket.last())
         }
         k++
         lim++
