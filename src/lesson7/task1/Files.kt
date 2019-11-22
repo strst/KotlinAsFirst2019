@@ -120,12 +120,12 @@ fun centerFile(inputName: String, outputName: String) {
             z = r.length
         m.add(r)
     }
-    val out = File(outputName).bufferedWriter()
-    for (i in m) {
-        out.write(" ".repeat((z - i.length) / 2) + i)
-        out.newLine()
+    File(outputName).bufferedWriter().use {
+        for (i in m) {
+            it.write(" ".repeat((z - i.length) / 2) + i)
+            it.newLine()
+        }
     }
-    out.close()
 }
 
 /**
@@ -156,15 +156,40 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
-    /*var z = 0
+    var z = 0
     val m = mutableListOf<String>()
     for (l in File(inputName).readLines()) {
         val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
         if (r.length > z)
             z = r.length
         m.add(r)
-    }*/
+    }
+    File(outputName).bufferedWriter().use {
+        for (i in m) {
+            it.write(edit(z, i))
+            it.newLine()
+        }
+    }
+}
+
+fun edit(sl: Int, inputs: String): String {
+    val ow = inputs.split(" ").toMutableList()
+    if (ow.size == 1) return inputs
+    val result = java.lang.StringBuilder()
+    var words = 0
+    ow.forEach { words += it.length }
+    var left = sl - words
+    val space = left / (ow.size - 1)
+    left -= space * (ow.size - 1)
+    for (i in 0..ow.size - 2)
+        if (left == 0) ow[i] += (" ".repeat(space))
+        else {
+            ow[i] += (" ".repeat(space + 1))
+            left--
+        }
+    for (i in ow)
+        result.append(i)
+    return result.toString()
 }
 
 /**
@@ -185,7 +210,24 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): MutableMap<String, Int> {
+    val r = File(inputName).readText()
+    var k = r.split(Regex("[^A-zА-яёЁ]")).filter { it != "" }.toMutableList()
+    val map = mutableMapOf<String, Int>()
+    var c = 0
+    while (c != -1) {
+        val d = k.filter { it.toLowerCase() != k[c].toLowerCase() }.toMutableList()
+        if (d.size > 1)
+            map[k[c].toLowerCase()] = k.size - d.size
+        else c--
+        k = d
+    }
+    map.values.removeAll(map.values.filter { it == 1 })
+    return if (map.size > 20) {
+        val r = map.values.sorted()
+        map.filter { it.value >= r.elementAt(r.size - 20) }.toMutableMap()
+    } else map
+}
 
 /**
  * Средняя
