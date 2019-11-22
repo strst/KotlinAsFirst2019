@@ -319,9 +319,13 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                         break@loop
                     }
                 }
+                require(c == 0)
             } else bracket.add(k)
             ']' -> if (l[i] != 0) k = bracket.last()
-            else bracket.remove(bracket.last())
+            else {
+                require(bracket.isNotEmpty())
+                bracket.remove(bracket.last())
+            }
         }
         k++
         lim++

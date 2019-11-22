@@ -115,14 +115,14 @@ fun centerFile(inputName: String, outputName: String) {
     var z = 0
     val m = mutableListOf<String>()
     for (l in File(inputName).readLines()) {
-        if (l.length > z)
-            z = l.length
-        m.add(l)
+        val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
+        if (r.length > z)
+            z = r.length
+        m.add(r)
     }
     val out = File(outputName).bufferedWriter()
     for (i in m) {
-        val r = Regex("([^ ]+ +)*[^ ]+").find(i)?.value ?: ""
-        out.write(" ".repeat((z - r.length) / 2) + r)
+        out.write(" ".repeat((z - i.length) / 2) + i)
         out.newLine()
     }
     out.close()
