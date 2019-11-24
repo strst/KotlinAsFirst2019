@@ -173,7 +173,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
 }
 
 fun edit(sl: Int, inputs: String): String {
-    val ow = inputs.split(" ").toMutableList()
+    val ow = inputs.split(Regex(" +")).toMutableList()
     if (ow.size == 1) return inputs
     val result = java.lang.StringBuilder()
     var words = 0
@@ -211,18 +211,11 @@ fun edit(sl: Int, inputs: String): String {
  *
  */
 fun top20Words(inputName: String): MutableMap<String, Int> {
-    val r = File(inputName).readText()
-    var k = r.split(Regex("[^A-zА-яёЁ]")).filter { it != "" }.toMutableList()
     val map = mutableMapOf<String, Int>()
-    var c = 0
-    while (c != -1) {
-        val d = k.filter { it.toLowerCase() != k[c].toLowerCase() }.toMutableList()
-        if (d.size > 1)
-            map[k[c].toLowerCase()] = k.size - d.size
-        else c--
-        k = d
-    }
-    map.values.removeAll(map.values.filter { it == 1 })
+    for (i in File(inputName).readLines())
+        for (j in i.split(Regex("[^A-zА-яёЁ]")).filter { it != "" }.toMutableList().map { it.toLowerCase() })
+            if (j in map) map[j] = map[j]!! + 1
+            else map[j] = 1
     return if (map.size > 20) {
         val r = map.values.sorted()
         map.filter { it.value >= r.elementAt(r.size - 20) }.toMutableMap()
