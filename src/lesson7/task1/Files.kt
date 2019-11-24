@@ -57,10 +57,11 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val map = mutableMapOf<String, Int>()
     substrings.forEach { map[it] = 0 }
     for (key in map.keys)
-        for (i in File(inputName).readLines())
+        File(inputName).bufferedReader().forEachLine { i ->
             for (it in 0..i.length - key.length)
                 if (i.substring(it until it + key.length).toUpperCase() == key.toUpperCase())
                     map[key] = map[key]!! + 1
+        }
     return map
 }
 
@@ -257,8 +258,30 @@ fun top20Words(inputName: String): MutableMap<String, Int> {
  *
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
-fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) =
+    File(outputName).bufferedWriter().use {
+        val map = mutableMapOf<Char, String>()
+        for ((key, value) in dictionary)
+            map[key.toLowerCase()] = value.toLowerCase()
+        for (i in File(inputName).readLines()) {
+            it.write(repliter(i, map))
+            it.newLine()
+        }
+    }
+
+
+fun repliter(r: String, map: MutableMap<Char, String>): String {
+    var str = r
+    for (i in str.indices) {
+        val str1 = str[i].toLowerCase()
+        if (str1 in map)
+            str = if (str1 == str[i]) str.replaceRange(i..i, map[str[i]]!!)
+            else str.replaceRange(
+                i..i,
+                map[str1]!!.substring(0..0).toUpperCase() + map[str1]!!.substring(1 until map[str1]!!.length)
+            )
+    }
+    return str
 }
 
 /**
