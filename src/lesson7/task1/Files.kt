@@ -237,7 +237,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
     File(outputName).bufferedWriter().use {
         val map = mutableMapOf<Char, String>()
         dictionary.forEach { (key, value) -> map[key.toLowerCase()] = value.toLowerCase() }
-        File(inputName).readLines().forEach { i -> it.write(repliter(i, map) + "\n") }
+        it.write(repliter(File(inputName).readText(), map) + "\n")
     }
 
 fun repliter(r: String, map: MutableMap<Char, String>): String {
