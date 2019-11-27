@@ -189,7 +189,7 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int =
-    Regex("""([A-zА-яёЁ]+) \1""").find(str.toUpperCase())?.range?.first ?: -1
+    Regex("""([^ ]+) \1""").find(str.toUpperCase())?.range?.first ?: -1
 
 /**
  * Сложная

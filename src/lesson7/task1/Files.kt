@@ -248,7 +248,11 @@ fun repliter(r: String, map: MutableMap<Char, String>): String {
             val link = str[i].toLowerCase()
             if (link == str[i])
                 str.replace(i, i + 1, map[link]!!.toLowerCase())
-            else str.replace(i, i + 1, map[link]!![0].toUpperCase().toString() + map[link]!!.drop(1).toLowerCase())
+            else str.replace(
+                i, i + 1, if (map[link]!!.isNotEmpty())
+                    map[link]!![0].toUpperCase().toString() + map[link]!!.drop(1).toLowerCase()
+                else ""
+            )
             i += map[link]!!.length - 1
         }
         i++
