@@ -53,15 +53,10 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+fun countSubstrings(inputName: String, substrings: List<String>): MutableMap<String, Int> {
     val map = mutableMapOf<String, Int>()
-    substrings.forEach { map[it] = 0 }
-    for (key in map.keys)
-        File(inputName).bufferedReader().forEachLine { i ->
-            for (it in 0..i.length - key.length)
-                if (i.substring(it until it + key.length).toUpperCase() == key.toUpperCase())
-                    map[key] = map[key]!! + 1
-        }
+    val t = File(inputName).readText().toLowerCase()
+    substrings.forEach { i -> map[i] = t.windowed(i.length).filter { it == i.toLowerCase() }.size }
     return map
 }
 
@@ -80,19 +75,10 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val out = File(outputName).bufferedWriter()
-    val l = listOf('Ж', 'Ч', 'Ш', 'Щ')
     val m = mapOf('ы' to 'и', 'я' to 'а', 'ю' to 'у', 'Ы' to 'И', 'Я' to 'А', 'Ю' to 'У')
-    for (i in File(inputName).readLines()) {
-        val s = StringBuilder()
-        s.append(i)
-        for (it in 0..s.length - 2)
-            if (s[it].toUpperCase() in l && s[it + 1].toUpperCase() in m.keys)
-                s.setCharAt(it + 1, m[s[it + 1]] ?: error("if"))
-        out.write(s.toString())
-        out.newLine()
-    }
-    out.close()
+    val r = StringBuilder(File(inputName).readText())
+    Regex("[жчшщ][ыяю]", RegexOption.IGNORE_CASE).findAll(r).forEach { r[it.range.last] = m.getValue(it.value.last()) }
+    File(outputName).bufferedWriter().use { it.append(r) }
 }
 
 /**
@@ -112,22 +98,18 @@ fun sibilants(inputName: String, outputName: String) {
  * 4) Число строк в выходном файле должно быть равно числу строк во входном (в т. ч. пустых)
  *
  */
-fun centerFile(inputName: String, outputName: String) {
-    var z = 0
-    val m = mutableListOf<String>()
-    for (l in File(inputName).readLines()) {
-        val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
-        if (r.length > z)
-            z = r.length
-        m.add(r)
-    }
+fun centerFile(inputName: String, outputName: String) =
     File(outputName).bufferedWriter().use {
-        for (i in m) {
-            it.write(" ".repeat((z - i.length) / 2) + i)
-            it.newLine()
+        var z = 0
+        val m = mutableListOf<String>()
+        for (l in File(inputName).readLines()) {
+            val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
+            if (r.length > z)
+                z = r.length
+            m.add(r)
         }
+        m.forEach { i -> it.write(" ".repeat((z - i.length) / 2) + i + "\n") }
     }
-}
 
 /**
  * Сложная
@@ -156,22 +138,18 @@ fun centerFile(inputName: String, outputName: String) {
  * 7) В самой длинной строке каждая пара соседних слов должна быть отделена В ТОЧНОСТИ одним пробелом
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
-fun alignFileByWidth(inputName: String, outputName: String) {
-    var z = 0
-    val m = mutableListOf<String>()
-    for (l in File(inputName).readLines()) {
-        val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
-        if (r.length > z)
-            z = r.length
-        m.add(r)
-    }
+fun alignFileByWidth(inputName: String, outputName: String) =
     File(outputName).bufferedWriter().use {
-        for (i in m) {
-            it.write(edit(z, i))
-            it.newLine()
+        var z = 0
+        val m = mutableListOf<String>()
+        for (l in File(inputName).readLines()) {
+            val r = Regex("([^ ]+ +)*[^ ]+").find(l)?.value ?: ""
+            if (r.length > z)
+                z = r.length
+            m.add(r)
         }
+        m.forEach { i -> it.write(edit(z, i) + "\n") }
     }
-}
 
 fun edit(sl: Int, inputs: String): String {
     val ow = inputs.split(Regex(" +")).toMutableList()
@@ -188,8 +166,7 @@ fun edit(sl: Int, inputs: String): String {
             ow[i] += (" ".repeat(space + 1))
             left--
         }
-    for (i in ow)
-        result.append(i)
+    ow.forEach { i -> result.append(i) }
     return result.toString()
 }
 
@@ -211,15 +188,13 @@ fun edit(sl: Int, inputs: String): String {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): MutableMap<String, Int> {
+fun top20Words(inputName: String): Map<String, Int> {
     val map = mutableMapOf<String, Int>()
-    for (i in File(inputName).readLines())
-        for (j in i.split(Regex("[^A-zА-яёЁ]")).filter { it != "" }.toMutableList().map { it.toLowerCase() })
-            if (j in map) map[j] = map[j]!! + 1
-            else map[j] = 1
+    for (j in File(inputName).readText().toLowerCase().split(Regex("[^A-zА-яёЁ]")).filter { it != "" })
+        map[j] = map[j]?.plus(1) ?: 1
     return if (map.size > 20) {
         val r = map.values.sorted()
-        map.filter { it.value >= r.elementAt(r.size - 20) }.toMutableMap()
+        map.filter { it.value >= r.elementAt(r.size - 20) }
     } else map
 }
 
@@ -261,27 +236,24 @@ fun top20Words(inputName: String): MutableMap<String, Int> {
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) =
     File(outputName).bufferedWriter().use {
         val map = mutableMapOf<Char, String>()
-        for ((key, value) in dictionary)
-            map[key.toLowerCase()] = value.toLowerCase()
-        for (i in File(inputName).readLines()) {
-            it.write(repliter(i, map))
-            it.newLine()
-        }
+        dictionary.forEach { (key, value) -> map[key.toLowerCase()] = value.toLowerCase() }
+        File(inputName).readLines().forEach { i -> it.write(repliter(i, map) + "\n") }
     }
-
 
 fun repliter(r: String, map: MutableMap<Char, String>): String {
-    var str = r
-    for (i in str.indices) {
-        val str1 = str[i].toLowerCase()
-        if (str1 in map)
-            str = if (str1 == str[i]) str.replaceRange(i..i, map[str[i]]!!)
-            else str.replaceRange(
-                i..i,
-                map[str1]!!.substring(0..0).toUpperCase() + map[str1]!!.substring(1 until map[str1]!!.length)
-            )
+    val str = StringBuilder(r)
+    var i = 0
+    while (i != str.length) {
+        if (str[i].toLowerCase() in map) {
+            val link = str[i].toLowerCase()
+            if (link == str[i])
+                str.replace(i, i + 1, map[link]!!.toLowerCase())
+            else str.replace(i, i + 1, map[link]!![0].toUpperCase().toString() + map[link]!!.drop(1).toLowerCase())
+            i += map[link]!!.length - 1
+        }
+        i++
     }
-    return str
+    return str.toString()
 }
 
 /**
