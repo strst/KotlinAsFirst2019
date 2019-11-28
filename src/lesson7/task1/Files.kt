@@ -347,11 +347,10 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    val r = StringBuilder("<html><body><p>")
+    var r = StringBuilder("<html><body><p>")
     r.append(File(inputName).readText())
     val map = mapOf(
-        """\*\*""" to Pair("<b>", "</b>"), """\~\~""" to Pair("<s>", "</s>"),
-        """\*""" to Pair("<i>", "</i>")
+        """\*\*""" to Pair("<b>", "</b>"), """\~\~""" to Pair("<s>", "</s>"), """\*""" to Pair("<i>", "</i>")
     )
     for ((key, value) in map) {
         val geg = Regex(key).findAll(r)
@@ -361,8 +360,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     }
     for (i in Regex("""<b><i>""").findAll(r))
         r.replace(i.range.first, i.range.last + 1, "<i><b>")
-    for (i in Regex("\\s{4}+").findAll(r))
-        r.replace(i.range.first, i.range.last + 1, "</p><p>")
+    for (i in Regex("\r").findAll(r))
+        r.delete(i.range.first, i.range.last + 1)
+    r = StringBuilder(r.replace(Regex("""\\n"""), "\n"))
+    for (i in Regex("\n+").findAll(r))
+        if (i.range.last - i.range.first != 0)
+            r.replace(i.range.first, i.range.last + 1, "</p><p>")
     r.append("</p></body></html>")
     File(outputName).bufferedWriter().use { it.write(r.toString()) }
 }
