@@ -285,7 +285,20 @@ fun repliter(r: String, map: MutableMap<Char, String>): String {
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    val g = File(inputName).readText().split(Regex("\\s+"))
+    File(outputName).bufferedWriter().use { out ->
+        out.write(g.filter { dd(it).length == g.maxBy { it1 -> dd(it1).length }!!.count() }
+            .toString().drop(1).dropLast(1))
+    }
+}
+
+fun dd(str: String): String {
+    val m = mutableMapOf<Char, Int>()
+    for (it in str)
+        if (m[it.toLowerCase()] ?: 0 < 1)
+            m[it.toLowerCase()] = 1
+        else return ""
+    return str
 }
 
 /**
@@ -334,7 +347,24 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val r = StringBuilder("<html><body><p>")
+    r.append(File(inputName).readText())
+    val map = mapOf(
+        """\*\*""" to Pair("<b>", "</b>"), """\~\~""" to Pair("<s>", "</s>"),
+        """\*""" to Pair("<i>", "</i>")
+    )
+    for ((key, value) in map) {
+        val geg = Regex(key).findAll(r)
+        for (j in geg)
+            if (geg.count() % 2 == 0) r.replace(j.range.first, j.range.last + 1, value.first)
+            else r.replace(j.range.first, j.range.last + 1, value.second)
+    }
+    for (i in Regex("""<b><i>""").findAll(r))
+        r.replace(i.range.first, i.range.last + 1, "<i><b>")
+    for (i in Regex("\\s{4}+").findAll(r))
+        r.replace(i.range.first, i.range.last + 1, "</p><p>")
+    r.append("</p></body></html>")
+    File(outputName).bufferedWriter().use { it.write(r.toString()) }
 }
 
 /**
