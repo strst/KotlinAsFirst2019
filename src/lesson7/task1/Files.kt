@@ -285,20 +285,8 @@ fun repliter(r: String, map: MutableMap<Char, String>): String {
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    val g = File(inputName).readText().split(Regex("\\s+"))
-    File(outputName).bufferedWriter().use { out ->
-        out.write(g.filter { dd(it).length == g.maxBy { it1 -> dd(it1).length }!!.count() }
-            .toString().drop(1).dropLast(1))
-    }
-}
-
-fun dd(str: String): String {
-    val m = mutableMapOf<Char, Int>()
-    for (it in str)
-        if (m[it.toLowerCase()] ?: 0 < 1)
-            m[it.toLowerCase()] = 1
-        else return ""
-    return str
+    val r = File(inputName).readLines().filter { it.toLowerCase().toSet().size == it.length }
+    File(outputName).writeText(r.filter { it.length == r.map { it1 -> it1.length }.max() }.joinToString { ", " })
 }
 
 /**
@@ -362,7 +350,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         r.replace(i.range.first, i.range.last + 1, "<i><b>")
     for (i in Regex("\r").findAll(r))
         r.delete(i.range.first, i.range.last + 1)
-    r = StringBuilder(r.replace(Regex("""\\n"""), "\n"))
+    /*r = StringBuilder(r.replace(Regex("""\\n"""), "\n"))*/
     for (i in Regex("\n+").findAll(r))
         if (i.range.last - i.range.first != 0)
             r.replace(i.range.first, i.range.last + 1, "</p><p>")
